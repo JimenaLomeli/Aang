@@ -1,0 +1,14 @@
+programa ejemplo;
+int a,b;
+
+int empezar {
+	a=10;
+	b=1;
+	if(a!=b) {
+		print(a*b);
+		a = a-1;
+	} else {
+		return(a/b);
+	}
+}
+fin

@@ -1,0 +1,13 @@
+programa ejemplo;
+int a,b,c;
+
+int multiplicar (int a, int b) {
+	return(a*b);
+}
+
+int empezar {
+	a = 1;
+	b = 1;
+	print(multiplicar(a, b));
+}
+fin

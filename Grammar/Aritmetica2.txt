@@ -1,0 +1,9 @@
+programa ejemplo;
+int a, b;
+
+int empezar {
+	a=1;
+	b=1;
+	return(a+b);
+}
+fin
