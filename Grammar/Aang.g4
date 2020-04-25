@@ -109,5 +109,5 @@ cte_var        : CTE_INT | ID ;
 llamar_fun	   : ID I_PARENTESIS argumentos D_PARENTESIS fc;
 
 argumentos	   : exp agregar_args | /* epsilon */ ;
-agregar_args	   : COMA exp agregar_args | /* epsilon */ ;
+agregar_args   : COMA exp agregar_args | /* epsilon */ ;
 fc             : PYCOMA | /* epsilon */ ;
