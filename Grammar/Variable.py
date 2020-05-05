@@ -30,5 +30,5 @@ class VariableTable:
 			raise Exception("{} is a reserved word".format(varName))
 
 		else:
-			var = Variable(varName, dataType, scope,memoryDir, value)
+			var = Variable(varName, dataType, scope, memoryDir, value)
 			self.vars[varName] = var

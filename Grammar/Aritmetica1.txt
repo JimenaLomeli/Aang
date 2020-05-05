@@ -1,6 +1,0 @@
-programa ejemplo;
-int a;
-int empezar { 
-	print(2+2);
-}
-fin
