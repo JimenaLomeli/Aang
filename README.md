@@ -3,22 +3,22 @@ Nuestra visión es hacer un lenguaje de programación que sea sencillo de usar p
 
 # Equipo 
 
-  Jorge Andrés Sabella
+- Jorge Andrés Sabella
 
-  Ana Jimena Lomeli Cantu
+- Ana Jimena Lomeli Cantu
   
 # Requerimientos
   
-  Python 3.7.2
-  Antlr4
+- Python 3.7.2
+- Antlr4
  
 # Como correr Aang
 Para compilar la gramatica utilizar el siguiente comando:
 ```bash
-  $ Antlr4 -Dlanguage=Python3 grammar/Aang.g4
+  $ Antlr4 -Dlanguage=Python3 Grammar/Aang.g4
 ```
   
 Para correr el programa Aang (Es necesario compilar primero la gramatica):
 ```bash
-  $ python3 AangMain.py <file-name>
+  $ python3 AangMain.py Grammar/<file-name>
 ```
