@@ -1,6 +1,6 @@
 programa ejemplo;
 int a;
 int empezar { 
-	print(2+2);
+	print(2/3+2);
 }
 fin

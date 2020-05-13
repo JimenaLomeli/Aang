@@ -1,4 +1,4 @@
-# Generated from Aang.g4 by ANTLR 4.8
+# Generated from Aang.g4 by ANTLR 4.7.2
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .AangParser import AangParser
@@ -215,15 +215,6 @@ class AangListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by AangParser#fac.
-    def enterFac(self, ctx:AangParser.FacContext):
-        pass
-
-    # Exit a parse tree produced by AangParser#fac.
-    def exitFac(self, ctx:AangParser.FacContext):
-        pass
-
-
     # Enter a parse tree produced by AangParser#termino.
     def enterTermino(self, ctx:AangParser.TerminoContext):
         pass
@@ -341,5 +332,3 @@ class AangListener(ParseTreeListener):
         pass
 
 
-
-del AangParser
