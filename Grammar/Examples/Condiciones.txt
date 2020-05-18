@@ -8,7 +8,7 @@ int empezar {
 		print(a*b);
 		a = a-1;
 	} else {
-		return(a/b);
+		print(a/b);
 	}
 }
 fin

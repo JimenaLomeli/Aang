@@ -1,6 +1,7 @@
 programa ejemplo;
 int a;
 int empezar { 
-	print(2+2);
+	#2/1+8/2-3/2
+	print(2/1+8/2-3/2);
 }
 fin

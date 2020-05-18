@@ -1,7 +1,5 @@
 from antlr4 import *
-from Function import *
-from Variable import *
-from AangMain import *
+
 
 class Quadruple:
     def __init__(self, operator, leftOp, rightOp, result):
@@ -10,6 +8,5 @@ class Quadruple:
         self.rightOp = rightOp
         self.result = result
 
-       def printQuad(self):
-        print(self.operator, '\t', self.leftOp, '\t', self.rightOp, '\t', self.result)
-
+    def printQuad(self):
+        print(f'[{self.operator}, {self.leftOp}, {self.rightOp}, {self.result}]')
