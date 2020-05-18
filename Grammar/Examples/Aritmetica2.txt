@@ -3,7 +3,8 @@ int a, b;
 
 int empezar {
 	a=1;
-	b=1;
-	return(a+b);
+	b=2;
+	c=6;
+	return(a+b/c);
 }
 fin

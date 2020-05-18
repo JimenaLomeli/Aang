@@ -95,12 +95,12 @@ e:
 	| DIFERENTE exp
 	| /* epsilon */;
 exp: termino e1;
-e1: SUMA termino | RESTA termino | /* epsilon */;
+e1: SUMA termino e1 | RESTA termino e1 | /* epsilon */;
 
 factor: I_PARENTESIS expresion D_PARENTESIS | cte_var;
 
 termino: factor t;
-t: MULT factor | DIVISION factor | /* epsilon */;
+t: MULT factor t | DIVISION factor t | /* epsilon */;
 
 condicion:
 	IF I_PARENTESIS expresion D_PARENTESIS I_CORCHETE acciones D_CORCHETE c;
