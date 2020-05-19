@@ -38,7 +38,7 @@ def serializedATN():
         buf.write("#\3#\3#\5#\u0124\n#\3$\3$\3$\3$\3$\5$\u012b\n$\3%\3%\5")
         buf.write("%\u012f\n%\3%\2\2&\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
         buf.write("\36 \"$&(*,.\60\62\64\668:<>@BDFH\2\4\3\2\16\17\3\2\37")
-        buf.write(" \2\u012d\2J\3\2\2\2\4U\3\2\2\2\6[\3\2\2\2\b]\3\2\2\2")
+        buf.write("!\2\u012d\2J\3\2\2\2\4U\3\2\2\2\6[\3\2\2\2\b]\3\2\2\2")
         buf.write("\n`\3\2\2\2\ff\3\2\2\2\16o\3\2\2\2\20s\3\2\2\2\22u\3\2")
         buf.write("\2\2\24w\3\2\2\2\26\u0082\3\2\2\2\30\u0089\3\2\2\2\32")
         buf.write("\u0091\3\2\2\2\34\u0098\3\2\2\2\36\u00ab\3\2\2\2 \u00ad")
@@ -1708,7 +1708,7 @@ class AangParser ( Parser ):
                 self.state = 214
                 self.match(AangParser.D_PARENTESIS)
                 pass
-            elif token in [AangParser.ID, AangParser.CTE_INT]:
+            elif token in [AangParser.ID, AangParser.CTE_INT, AangParser.CTE_CHAR]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 216
                 self.cte_var()
@@ -2269,6 +2269,9 @@ class AangParser ( Parser ):
         def CTE_INT(self):
             return self.getToken(AangParser.CTE_INT, 0)
 
+        def CTE_CHAR(self):
+            return self.getToken(AangParser.CTE_CHAR, 0)
+
         def ID(self):
             return self.getToken(AangParser.ID, 0)
 
@@ -2295,7 +2298,7 @@ class AangParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 277
             _la = self._input.LA(1)
-            if not(_la==AangParser.ID or _la==AangParser.CTE_INT):
+            if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << AangParser.ID) | (1 << AangParser.CTE_INT) | (1 << AangParser.CTE_CHAR))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -2407,7 +2410,7 @@ class AangParser ( Parser ):
             self.state = 289
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [AangParser.I_PARENTESIS, AangParser.ID, AangParser.CTE_INT]:
+            if token in [AangParser.I_PARENTESIS, AangParser.ID, AangParser.CTE_INT, AangParser.CTE_CHAR]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 285
                 self.exp()

@@ -113,7 +113,7 @@ escribir: PRINT I_PARENTESIS es D_PARENTESIS PYCOMA;
 es: expresion es2 | CTE_CHAR es2 | llamar_fun;
 es2: COMA es | /* epsilon */;
 
-cte_var: CTE_INT | ID;
+cte_var: CTE_INT| CTE_CHAR | ID;
 
 llamar_fun: ID I_PARENTESIS argumentos D_PARENTESIS fc;
 

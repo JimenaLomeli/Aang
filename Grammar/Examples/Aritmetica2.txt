@@ -1,10 +1,11 @@
 programa ejemplo;
-int a, b;
-
+int a,b,c,d,e;
+#char d,f,e;
 int empezar {
-	a=1;
-	b=2;
-	c=6;
-	return(a+b/c);
+	print(a+b*c-d*e);
+	#b=a;
+	#print(a);
+	#c=6;
+	#return(a+b/c);
 }
 fin

@@ -13,9 +13,9 @@ Nuestra visión es hacer un lenguaje de programación que sea sencillo de usar p
 - Antlr4
  
 # Como correr Aang
-Para compilar la gramatica utilizar el siguiente comando:
+Para compilar la gramatica utilizar el siguiente comando dentro de la carpeta de Grammar:
 ```bash
-  $ Antlr4 -Dlanguage=Python3 Grammar/Aang.g4
+  $ antlr4 -Dlanguage=Python3 Aang.g4
 ```
   
 Para correr el programa Aang (Es necesario compilar primero la gramatica):
