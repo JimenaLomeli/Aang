@@ -11,6 +11,9 @@ class stack():
         self.items.append(data)
 
     def pop(self):
+        if len(self.items) == 0:
+            raise Exception(
+                "La pila esta vacia")
         return self.items.pop()
 
     def top(self):

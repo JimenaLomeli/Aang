@@ -1,14 +1,13 @@
 programa ejemplo;
-int a,b;
+int a,b,c,d;
 
 int empezar {
-	a=10;
-	b=1;
-	if(a!=b) {
-		print(a*b);
-		a = a-1;
-	} else {
-		print(a/b);
+	if(a + b > c * d) {
+		a = b +d;
+	} 
+	else {
+		a = d - c;
 	}
+	b= a * c + d;
 }
 fin

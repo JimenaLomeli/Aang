@@ -16,7 +16,7 @@ class VariableTable:
     def __init__(self, vars):
         self.vars = {}
         self.keywords = ["int", "void", "char", "if", "else", "while",
-                         "print", "return", "id", "programa", "empezar", "fin"]
+                         "print", "return", "id", "programa", "empezar", "fin", "bool"]
 
     def get_variable(self, varName):
         if varName in self.vars.keys():

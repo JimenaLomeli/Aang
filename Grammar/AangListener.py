@@ -242,12 +242,21 @@ class AangListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by AangParser#c.
-    def enterC(self, ctx:AangParser.CContext):
+    # Enter a parse tree produced by AangParser#c1.
+    def enterC1(self, ctx:AangParser.C1Context):
         pass
 
-    # Exit a parse tree produced by AangParser#c.
-    def exitC(self, ctx:AangParser.CContext):
+    # Exit a parse tree produced by AangParser#c1.
+    def exitC1(self, ctx:AangParser.C1Context):
+        pass
+
+
+    # Enter a parse tree produced by AangParser#c2.
+    def enterC2(self, ctx:AangParser.C2Context):
+        pass
+
+    # Exit a parse tree produced by AangParser#c2.
+    def exitC2(self, ctx:AangParser.C2Context):
         pass
 
 

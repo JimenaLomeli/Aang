@@ -24,6 +24,7 @@ O_SIMBOLO: '||';
 //Keywords
 INT: 'int';
 CHAR: 'char';
+BOOL: 'bool';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
@@ -43,6 +44,7 @@ COMA: ',';
 
 //Data Types
 VOID: 'void';
+CTE_BOOL: 'True' | 'False';
 ID: [a-zA-Z]+;
 CTE_INT: [1-9][0-9]*;
 CTE_CHAR: [A-Za-z];
@@ -64,7 +66,7 @@ v: ID v1 PYCOMA v2;
 v1: COMA ID v1 | /* epsilon */;
 v2: variable | /* epsilon */;
 
-tipo_id: INT | CHAR;
+tipo_id: INT | CHAR | BOOL;
 
 funcion:
 	f ID I_PARENTESIS f1 D_PARENTESIS I_CORCHETE bloque D_CORCHETE;
@@ -103,8 +105,11 @@ termino: factor t;
 t: MULT factor t | DIVISION factor t | /* epsilon */;
 
 condicion:
-	IF I_PARENTESIS expresion D_PARENTESIS I_CORCHETE acciones D_CORCHETE c;
-c: ELSE I_CORCHETE acciones D_CORCHETE | /* epsilon */;
+	IF I_PARENTESIS expresion D_PARENTESIS c1;
+
+c1: I_CORCHETE acciones D_CORCHETE c2;
+
+c2: ELSE I_CORCHETE acciones D_CORCHETE | /* epsilon */;
 
 ciclo:
 	WHILE I_PARENTESIS expresion D_PARENTESIS I_CORCHETE acciones D_CORCHETE;
@@ -113,7 +118,7 @@ escribir: PRINT I_PARENTESIS es D_PARENTESIS PYCOMA;
 es: expresion es2 | CTE_CHAR es2 | llamar_fun;
 es2: COMA es | /* epsilon */;
 
-cte_var: CTE_INT| CTE_CHAR | ID;
+cte_var: CTE_INT| CTE_CHAR | ID | CTE_BOOL;
 
 llamar_fun: ID I_PARENTESIS argumentos D_PARENTESIS fc;
 

@@ -20,7 +20,7 @@ class AangCustomListener(AangListener):
     PilaOper = stack()
     Avail = avail()
     PSaltos = stack()
-    quads = []
+    FilaQuads = []
     PilaTipos = stack()
 
     # Memory address
@@ -34,29 +34,38 @@ class AangCustomListener(AangListener):
     def enterPrograma(self, ctx: AangParser.ProgramaContext):
         pass
 
+    def exitPrograma(self, ctx: AangParser.ProgramaContext):
+        for index, quad in enumerate(self.FilaQuads, 1):
+            print(index, quad)
+
     def enterE(self, ctx: AangParser.EContext):
-        # if ctx.MAYOR() != None:
-        #     self.PilaOper.push(str(ctx.MAYOR()))
-        # if ctx.MENOR() != None:
-        #     self.PilaOper.push(str(ctx.MENOR()))
-        # if ctx.IGUAL() != None:
-        #     self.PilaOper.push(str(ctx.IGUAL()))
-        # if ctx.DIFERENTE() != None:
-        #     self.PilaOper.push(str(ctx.DIFERENTE()))
+        if ctx.MAYOR() != None:
+            self.PilaOper.push(str(ctx.MAYOR()))
+        if ctx.MENOR() != None:
+            self.PilaOper.push(str(ctx.MENOR()))
+        if ctx.IGUAL() != None:
+            self.PilaOper.push(str(ctx.IGUAL()))
+        if ctx.DIFERENTE() != None:
+            self.PilaOper.push(str(ctx.DIFERENTE()))
         pass
 
     def exitExpresion(self, ctx: AangParser.ExpresionContext):
         pass
 
     def exitE(self, ctx: AangParser.EContext):
-        # print(self.PilaO.items)
-        # operator = self.PilaOper.pop()
-        # leftOperand = self.PilaO.pop()
-        # rightOperand = self.PilaO.pop()
-        # self.PilaO.push(self.Avail.newElement())
-        # result = str(self.PilaO.top())
-        # quad = Quadruple(operator, leftOperand, rightOperand, result)
-        # quad.printQuad()
+        if ctx.MAYOR() != None or ctx.MENOR() != None or ctx.IGUAL() != None or ctx.DIFERENTE() != None:
+            operator = self.PilaOper.pop()
+            leftOperand = self.PilaO.pop()
+            rightOperand = self.PilaO.pop()
+            Type = SemanticCube().cube[rightOperand[1],
+                                       leftOperand[1], operator]
+            if Type == Types().ERROR:
+                raise Exception(Types().ERROR)
+            self.PilaO.push((self.Avail.newElement(), Type))
+            result = self.PilaO.top()
+            quad = Quadruple(
+                operator, rightOperand[0], leftOperand[0], result[0])
+            self.FilaQuads.append(quad)
         pass
 
     def enterAsignacion(self, ctx: AangParser.AsignacionContext):
@@ -71,7 +80,7 @@ class AangCustomListener(AangListener):
             raise Exception(Types().ERROR)
 
         quad = Quadruple(operator, leftOperand[0], rightOperand, result[0])
-        quad.printQuad()
+        self.FilaQuads.append(quad)
 
     def enterEscribir(self, ctx: AangParser.EscribirContext):
         self.PilaOper.push(str(ctx.PRINT()))
@@ -83,7 +92,7 @@ class AangCustomListener(AangListener):
         rightOperand = None
         result = None
         quad = Quadruple(operator, leftOperand[0], rightOperand, result)
-        quad.printQuad()
+        self.FilaQuads.append(quad)
         pass
 
     def enterExp(self, ctx: AangParser.ExpContext):
@@ -108,10 +117,15 @@ class AangCustomListener(AangListener):
 
     def enterFactor(self, ctx: AangParser.FactorContext):
         # print('Entre a Factor')
+        if ctx.I_PARENTESIS() != None:
+            self.PilaOper.push(str(ctx.I_PARENTESIS()))
         pass
 
     def exitFactor(self, ctx: AangParser.FactorContext):
         # print('Sali de Factor')
+        if ctx.D_PARENTESIS() != None:
+            self.PilaOper.pop()
+
         if(self.PilaOper.top() == '/' or self.PilaOper.top() == '*'):
             operator = str(self.PilaOper.pop())
             rightOperand = self.PilaO.pop()
@@ -124,7 +138,7 @@ class AangCustomListener(AangListener):
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, leftOperand[0], rightOperand[0], result[0])
-            quad.printQuad()
+            self.FilaQuads.append(quad)
 
     def enterCte_var(self, ctx):
         pass
@@ -132,9 +146,11 @@ class AangCustomListener(AangListener):
     def exitCte_var(self, ctx: AangParser.Cte_varContext):
         if ctx.CTE_INT() != None:
             self.PilaO.push((int(str(ctx.CTE_INT())), "int"))
-        if ctx.CTE_CHAR() != None:
+        elif ctx.CTE_CHAR() != None:
             self.PilaO.push((str(ctx.CTE_CHAR()), "char"))
-        if ctx.ID() != None:
+        elif ctx.CTE_BOOL() != None:
+            self.PilaO.push((str(ctx.CTE_BOOL()), "bool"))
+        elif ctx.ID() != None:
             self.PilaO.push(
                 (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType))
         # print(self.PilaO.items)
@@ -157,7 +173,7 @@ class AangCustomListener(AangListener):
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, leftOperand[0], rightOperand[0], result[0])
-            quad.printQuad()
+            self.FilaQuads.append(quad)
         # print('Sali de Termino')
 
     def enterT(self, ctx: AangParser.TContext):
@@ -213,6 +229,8 @@ class AangCustomListener(AangListener):
             self.PilaTipos.push(str(ctx.INT()))
         if ctx.CHAR() != None:
             self.PilaTipos.push(str(ctx.CHAR()))
+        if ctx.BOOL() != None:
+            self.PilaTipos.push(str(ctx.BOOL()))
         # print(self.PilaTipos.items)
 
     # Exit a parse tree produced by AangParser#tipo_id.
@@ -254,4 +272,45 @@ class AangCustomListener(AangListener):
     # Exit a parse tree produced by AangParser#v2.
     def exitV2(self, ctx: AangParser.V2Context):
         # print('sali de V2')
+        pass
+
+    ###### Condicion ######
+    def enterC1(self, ctx: AangParser.C1Context):
+        if(self.PilaO.top()[1] != 'bool'):
+            raise Exception(
+                "El resultado del la condicion del if no es booleano")
+        operator = "GotoF"
+        rightOperand = self.PilaO.pop()
+        leftOperand = None
+        result = "vacio"
+        quad = Quadruple(
+            operator, rightOperand[0], leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.PSaltos.push(len(self.FilaQuads)-1)
+        pass
+
+    def exitC1(self, ctx: AangParser.C1Context):
+        pass
+
+    # Enter a parse tree produced by AangParser#c2.
+    def enterC2(self, ctx: AangParser.C2Context):
+        if ctx.ELSE() == None:
+            self.FilaQuads[self.PSaltos.pop()].result = len(self.FilaQuads) + 1
+        else:
+            operator = "Goto"
+            rightOperand = None
+            leftOperand = None
+            result = "vacio"
+            quad = Quadruple(
+                operator, rightOperand, leftOperand, result)
+            self.FilaQuads.append(quad)
+            self.FilaQuads[self.PSaltos.pop()].result = len(self.FilaQuads) + 1
+            self.PSaltos.push(len(self.FilaQuads))
+
+    # Exit a parse tree produced by AangParser#c2.
+
+    def exitC2(self, ctx: AangParser.C2Context):
+        if ctx.ELSE() != None:
+            self.FilaQuads[self.PSaltos.pop(
+            )-1].result = len(self.FilaQuads) + 1
         pass

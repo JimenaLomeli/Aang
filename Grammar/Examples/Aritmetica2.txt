@@ -1,9 +1,11 @@
 programa ejemplo;
-int a,b,c,d,e;
+int a,b,c,d,e, f, g, h, i, j, k;
 #char d,f,e;
+bool lore;
 int empezar {
-	print(a+b*c-d*e);
-	#b=a;
+	print((a+b)*c/(d+e)-f*g>h*(i+j)-k);
+	#print(a*(b+c/(d-e)));
+	#lore= a + b < c * d;
 	#print(a);
 	#c=6;
 	#return(a+b/c);
