@@ -36,3 +36,8 @@ class VariableTable:
         else:
             var = Variable(varName, dataType, scope, memoryDir, value)
             self.vars[varName] = var
+
+    def print_table(self):
+        for variable in self.vars:
+            print(variable)
+            print(self.vars[variable].memoryDir)

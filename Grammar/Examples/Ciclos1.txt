@@ -1,11 +1,11 @@
 programa ejemplo;
-int a,b;
+int a,b,c,d;
 
 int empezar {
-	a=10;
-	b=1;
-	while(a > b) {
-		a = a-1;
+	while(a > b * c) {
+		a = 1-d;
+		print(a);
 	}
+	b = c + a;
 }
 fin

@@ -260,12 +260,21 @@ class AangListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by AangParser#ciclo.
-    def enterCiclo(self, ctx:AangParser.CicloContext):
+    # Enter a parse tree produced by AangParser#ciclo1.
+    def enterCiclo1(self, ctx:AangParser.Ciclo1Context):
         pass
 
-    # Exit a parse tree produced by AangParser#ciclo.
-    def exitCiclo(self, ctx:AangParser.CicloContext):
+    # Exit a parse tree produced by AangParser#ciclo1.
+    def exitCiclo1(self, ctx:AangParser.Ciclo1Context):
+        pass
+
+
+    # Enter a parse tree produced by AangParser#ciclo2.
+    def enterCiclo2(self, ctx:AangParser.Ciclo2Context):
+        pass
+
+    # Exit a parse tree produced by AangParser#ciclo2.
+    def exitCiclo2(self, ctx:AangParser.Ciclo2Context):
         pass
 
 

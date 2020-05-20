@@ -78,7 +78,7 @@ bloque: variable bloque | acciones | /* epsilon */;
 acciones:
 	asignacion acciones
 	| condicion acciones
-	| ciclo acciones
+	| ciclo1 acciones
 	| escribir acciones
 	| llamar_fun acciones
 	| fun_regresar
@@ -111,8 +111,10 @@ c1: I_CORCHETE acciones D_CORCHETE c2;
 
 c2: ELSE I_CORCHETE acciones D_CORCHETE | /* epsilon */;
 
-ciclo:
-	WHILE I_PARENTESIS expresion D_PARENTESIS I_CORCHETE acciones D_CORCHETE;
+ciclo1:
+	WHILE I_PARENTESIS expresion D_PARENTESIS ciclo2;
+
+ciclo2: I_CORCHETE acciones D_CORCHETE;
 
 escribir: PRINT I_PARENTESIS es D_PARENTESIS PYCOMA;
 es: expresion es2 | CTE_CHAR es2 | llamar_fun;
