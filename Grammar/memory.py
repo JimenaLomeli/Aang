@@ -27,6 +27,9 @@ class memory:
         self.t = self.t + 1
         return self.temporales + self.t - 1
 
+    def resetTemporales(self):
+        self.t = 0
+
     def __str__(self):
         return str(self.__dict__)
 

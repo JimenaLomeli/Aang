@@ -25,6 +25,7 @@ class AangCustomListener(AangListener):
     FilaQuads = []
     FilaQuadsMemoria = []
     PilaTipos = stack()
+    PilaFunc = stack()
     memoriaGlobal = memory(10000, 20000, 30000, 40000)
     memoriaConstante = memory(90000, 100000, 110000, 0)
 
@@ -36,6 +37,7 @@ class AangCustomListener(AangListener):
     functionDirectory = FunctionDir()
     varTable = VariableTable({})
     constTable = ConstantTable()
+    localVarTable = VariableTable({})
 
     def enterPrograma(self, ctx: AangParser.ProgramaContext):
         pass
@@ -87,9 +89,20 @@ class AangCustomListener(AangListener):
         operator = self.PilaOper.pop()
         leftOperand = self.PilaO.pop()
         rightOperand = None
-        result = (str(ctx.ID()), self.varTable.vars[str(
-            ctx.ID())].dataType, self.varTable.vars[str(
-                ctx.ID())].memoryDir)
+        if self.PilaFunc == None:
+            result = (str(ctx.ID()), self.varTable.vars[str(
+                ctx.ID())].dataType, self.varTable.vars[str(
+                    ctx.ID())].memoryDir)
+        else:
+            if self.localVarTable.get_local_variable(str(ctx.ID())):
+                result = (str(ctx.ID()), self.localVarTable.vars[str(
+                    ctx.ID())].dataType, self.localVarTable.vars[str(
+                        ctx.ID())].memoryDir)
+            else:
+                self.varTable.exist(str(ctx.ID()))
+                result = (str(ctx.ID()), self.varTable.vars[str(
+                    ctx.ID())].dataType, self.varTable.vars[str(
+                        ctx.ID())].memoryDir)
         if SemanticCube().cube[result[1], leftOperand[1], operator] == Types().ERROR:
             raise Exception(Types().ERROR)
 
@@ -187,8 +200,17 @@ class AangCustomListener(AangListener):
                 self.PilaO.push((str(ctx.CTE_BOOL()), "bool", self.constTable.constants[str(
                     ctx.CTE_BOOL())].memoryDir))
         elif ctx.ID() != None:
-            self.PilaO.push(
-                (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
+            if self.PilaFunc == None:
+                self.PilaO.push(
+                    (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
+            else:
+                if self.localVarTable.get_local_variable(str(ctx.ID())):
+                    self.PilaO.push(
+                        (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir))
+                else:
+                    self.varTable.exist(str(ctx.ID()))
+                    self.PilaO.push(
+                        (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
 
         # for constant in self.constTable.constants.values():
         #    print(constant.memoryDir)
@@ -230,28 +252,6 @@ class AangCustomListener(AangListener):
         # print('Sali de T')
         pass
 
-    # def add_var(self, ctx):
-    #    global varName
-    #    # cast to string to avoid dealing with TerminalNode objects
-    #    varName = str(ctx.ID())
-    #    if varName != "None":
-    #        if dataType == 'int':
-    #            global varIntAddr
-    #            VariableTable.add_variable(
-    #                varName, dataType, "global", varIntAddr)
-    #            varIntAddr = varIntAddr + 1
-    #        else:
-    #            global varCharAddr
-    #            VariableTable.add_variable(
-    #                varName, dataType, "global", varCharAddr)
-    #            varCharAddr = varCharAddr + 1
-
-    # def enterV(self, ctx):
-    #    self.addVar(ctx)
-
-    # def enterV1(self, ctx):
-    #    self.addVar(ctx)
-
     # Enter a parse tree produced by AangParser#variable.
     def enterVariable(self, ctx: AangParser.VariableContext):
         # print('entre a Variable')
@@ -285,15 +285,30 @@ class AangCustomListener(AangListener):
     # Enter a parse tree produced by AangParser#v.
     def enterV(self, ctx: AangParser.VContext):
         # print('entre a V')
-        direccion = 0
-        if self.PilaTipos.top() == 'int':
-            direccion = self.memoriaGlobal.getEntera()
-        elif self.PilaTipos.top() == 'char':
-            direccion = self.memoriaGlobal.getChar()
-        elif self.PilaTipos.top() == 'bool':
-            direccion = self.memoriaGlobal.getBooleanos()
-        self.varTable.add_variable(
-            str(ctx.ID()), self.PilaTipos.top(), "global", direccion, None)
+        if ctx.ID() != None:
+            if self.PilaFunc.top() == None:
+                direccion = 0
+                if self.PilaTipos.top() == 'int':
+                    direccion = self.memoriaGlobal.getEntera()
+                elif self.PilaTipos.top() == 'char':
+                    direccion = self.memoriaGlobal.getChar()
+                elif self.PilaTipos.top() == 'bool':
+                    direccion = self.memoriaGlobal.getBooleanos()
+                self.varTable.add_variable(
+                    str(ctx.ID()), self.PilaTipos.top(), "global", direccion)
+            else:
+                direccion = 0
+                if self.PilaTipos.top() == 'int':
+                    direccion = self.functionDirectory.getNextInt(
+                        self.PilaFunc.top())
+                elif self.PilaTipos.top() == 'char':
+                    direccion = self.functionDirectory.getNextBool(
+                        self.PilaFunc.top())
+                elif self.PilaTipos.top() == 'bool':
+                    direccion = self.functionDirectory.getNextChar(
+                        self.PilaFunc.top())
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), self.PilaTipos.top(), "local", direccion)
         pass
 
     # Exit a parse tree produced by AangParser#v.
@@ -305,15 +320,29 @@ class AangCustomListener(AangListener):
     def enterV1(self, ctx: AangParser.V1Context):
         # print('entre a V1')
         if ctx.ID() != None:
-            direccion = 0
-            if self.PilaTipos.top() == 'int':
-                direccion = self.memoriaGlobal.getEntera()
-            elif self.PilaTipos.top() == 'char':
-                direccion = self.memoriaGlobal.getChar()
-            elif self.PilaTipos.top() == 'bool':
-                direccion = self.memoriaGlobal.getBooleanos()
-            self.varTable.add_variable(
-                str(ctx.ID()), self.PilaTipos.top(), "global", direccion, None)
+            if self.PilaFunc.top() == None:
+                direccion = 0
+                if self.PilaTipos.top() == 'int':
+                    direccion = self.memoriaGlobal.getEntera()
+                elif self.PilaTipos.top() == 'char':
+                    direccion = self.memoriaGlobal.getChar()
+                elif self.PilaTipos.top() == 'bool':
+                    direccion = self.memoriaGlobal.getBooleanos()
+                self.varTable.add_variable(
+                    str(ctx.ID()), self.PilaTipos.top(), "global", direccion)
+            else:
+                direccion = 0
+                if self.PilaTipos.top() == 'int':
+                    direccion = self.functionDirectory.getNextInt(
+                        self.PilaFunc.top())
+                elif self.PilaTipos.top() == 'char':
+                    direccion = self.functionDirectory.getNextBool(
+                        self.PilaFunc.top())
+                elif self.PilaTipos.top() == 'bool':
+                    direccion = self.functionDirectory.getNextChar(
+                        self.PilaFunc.top())
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), self.PilaTipos.top(), "local", direccion)
 
     # Exit a parse tree produced by AangParser#v1.
     def exitV1(self, ctx: AangParser.V1Context):
@@ -433,3 +462,78 @@ class AangCustomListener(AangListener):
         self.FilaQuads[len(self.FilaQuads)-1].result = numeroQuad
         self.FilaQuadsMemoria[len(self.FilaQuadsMemoria)-1].result = numeroQuad
         pass
+
+    # Enter a parse tree produced by AangParser#funcion.
+    def enterFuncion(self, ctx: AangParser.FuncionContext):
+        self.functionDirectory.add_function(ctx.ID())
+        self.PilaFunc.push(ctx.ID())
+        self.localVarTable = VariableTable({})
+        self.functionDirectory.setStartPosition(
+            self.PilaFunc.top(), len(self.FilaQuadsMemoria) + 1)
+        pass
+
+    # Exit a parse tree produced by AangParser#funcion.
+    def exitFuncion(self, ctx: AangParser.FuncionContext):
+        self.functionDirectory.setLocalVariables(
+            self.PilaFunc.top(), len(self.localVarTable.vars))
+        self.functionDirectory.setTemporalVariables(
+            self.PilaFunc.top(), self.memoriaGlobal.t)
+        self.PilaFunc.pop()
+        self.functionDirectory.print_table()
+        self.localVarTable.print_table()
+        self.memoriaGlobal.resetTemporales()
+        pass
+
+    # Enter a parse tree produced by AangParser#f.
+    def enterF(self, ctx: AangParser.FContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#f.
+    def exitF(self, ctx: AangParser.FContext):
+        if ctx.VOID() != None:
+            self.functionDirectory.setReturnType(
+                self.PilaFunc.top(), ctx.VOID())
+        else:
+            self.functionDirectory.setReturnType(
+                self.PilaFunc.top(), self.PilaTipos.pop())
+        pass
+
+    # Enter a parse tree produced by AangParser#f1.
+    def enterF1(self, ctx: AangParser.F1Context):
+        pass
+
+    # Exit a parse tree produced by AangParser#f1.
+    def exitF1(self, ctx: AangParser.F1Context):
+        if ctx.ID() != None:
+            tipo = self.PilaTipos.pop()
+            self.functionDirectory.addParameter(
+                self.PilaFunc.top(), tipo)
+            if tipo == "int":
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), tipo, "local", self.functionDirectory.getNextInt(self.PilaFunc.top()))
+            elif tipo == "bool":
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), tipo, "local", self.functionDirectory.getNextBool(self.PilaFunc.top()))
+            elif tipo == "char":
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), tipo, "local", self.functionDirectory.getNextChar(self.PilaFunc.top()))
+
+    # Enter a parse tree produced by AangParser#f2.
+    def enterF2(self, ctx: AangParser.F2Context):
+        pass
+
+    # Exit a parse tree produced by AangParser#f2.
+    def exitF2(self, ctx: AangParser.F2Context):
+        if ctx.ID() != None:
+            tipo = self.PilaTipos.pop()
+            self.functionDirectory.addParameter(
+                self.PilaFunc.top(), tipo)
+            if tipo == "int":
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), tipo, "local", self.functionDirectory.getNextInt(self.PilaFunc.top()))
+            elif tipo == "bool":
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), tipo, "local", self.functionDirectory.getNextBool(self.PilaFunc.top()))
+            elif tipo == "char":
+                self.localVarTable.add_variable(
+                    str(ctx.ID()), tipo, "local", self.functionDirectory.getNextChar(self.PilaFunc.top()))

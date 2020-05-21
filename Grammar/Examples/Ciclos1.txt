@@ -1,11 +1,23 @@
 programa ejemplo;
-int a,b,c,d;
+int a,c,f, i, j ,k;
+
+void uno(int a, int b){
+ 	if (a>b){
+		i= a+b*j+i;
+ 		print ( i+j );
+	} else { 
+		print ( a + b );
+	}
+}
+
+int Zuko (int a, int b){
+	int c,d,e;
+	a = b * c + f / e;
+	return a;
+}
+
 
 int empezar {
-	while(a > b * c) {
-		a = 1-d;
-		print(a);
-	}
 	b = c + a;
 }
 fin

@@ -1,33 +1,75 @@
 from antlr4 import *
 from Variable import Variable
+from memory import memory
 
 # Store information about a function
+
+
 class Function:
-    def __init__(self, funcName, parameters, returnType):
+    def __init__(self, funcName):
         self.funcName = funcName
-        self.returnType = returnType
+        self.startPosition = 0
+        self.returnType = None
+        self.memory = memory(50000, 60000, 70000, 80000)
         self.parameters = []
-        self.variables = parameters
-    
+        self.localVariables = 0
+        self.temporalVariables = 0
+
+
 class FunctionDir:
     def __init__(self):
         self.dictionary = {
         }
 
+    def setStartPosition(self, funcName, startPosition):
+        self.dictionary[funcName].startPosition = startPosition
+
+    def setReturnType(self, funcName, returnType):
+        self.dictionary[funcName].returnType = returnType
+
+    def addParameter(self, funcName, parameter):
+        self.dictionary[funcName].parameters.append(parameter)
+
+    def setLocalVariables(self, funcName, localVariables):
+        self.dictionary[funcName].localVariables = localVariables
+
+    def setTemporalVariables(self, funcName, temporalVariables):
+        self.dictionary[funcName].temporalVariables = temporalVariables
+
     def get_function(self, funcName):
         if funcName not in self.dictionary:
-            raise Exception("{} does not exist in the directory".format(funcName))
+            raise Exception(
+                "{} does not exist in the directory".format(funcName))
         else:
             self.dictionary[funcName]
 
-    def add_function(self, funcName, parameters, returnType):
-        if funcName in self.functions:
+    def exist(self, funcName):
+        if funcName not in self.dictionary:
+            raise Exception(
+                "{} does not exist in the directory".format(funcName))
+        return True
+
+    def getNextInt(self, funcName):
+        return self.dictionary[funcName].memory.getEntera()
+
+    def getNextBool(self, funcName):
+        return self.dictionary[funcName].memory.getBooleanos()
+
+    def getNextChar(self, funcName):
+        return self.dictionary[funcName].memory.getChar()
+
+    def getNextTemp(self, funcName):
+        return self.dictionary[funcName].memory.getTemporales()
+
+    def add_function(self, funcName):
+        if funcName in self.dictionary:
             raise Exception("The function already exists.")
         else:
-            self.functions[funcName] = Function(
-                funcName, returnType, {})
-            self.functions[funcName].parameters = parameters
-            for parameter in parameters:
-                self.add_variable(
-                    parameter.name, parameter.type, parameter.scope, value)
+            self.dictionary[funcName] = Function(
+                funcName)
 
+    def print_table(self):
+        for func in self.dictionary:
+            print(str(func) + ': ' + str(self.dictionary[func].startPosition) + ", " + str(self.dictionary[func].returnType) + ", " + str(len(self.dictionary[func].parameters)) + ", " + str(
+                self.dictionary[func].localVariables) + ", " + str(self.dictionary[func].temporalVariables))
+            print(self.dictionary[func].parameters)

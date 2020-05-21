@@ -3,7 +3,7 @@ int a,b,c,d;
 
 int empezar {
 	if(a + b > c * d) {
-		a = b +d;
+		a = b +1;
 	} 
 	else {
 		a = d - c;

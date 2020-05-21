@@ -4,11 +4,10 @@ from antlr4 import *
 
 
 class Variable:
-    def __init__(self, varName, dataType, scope, memoryDir, value):
+    def __init__(self, varName, dataType, scope, memoryDir):
         self.varName = varName
         self.dataType = dataType
         self.scope = scope
-        self.value = value
         self.memoryDir = memoryDir
 
 
@@ -25,7 +24,15 @@ class VariableTable:
             raise Exception(
                 "{} does not exist in the directory".format(varName))
 
-    def add_variable(self, varName, dataType, scope, memoryDir, value):
+    def exist(self, varName):
+        if varName not in self.vars.keys():
+            raise Exception(
+                "{} does not exist in the directory".format(varName))
+
+    def get_local_variable(self, varName):
+        return varName in self.vars.keys()
+
+    def add_variable(self, varName, dataType, scope, memoryDir):
         if varName in self.vars:
             raise Exception(
                 "{} already exists in the directory".format(varName))
@@ -34,10 +41,10 @@ class VariableTable:
             raise Exception("{} is a reserved word".format(varName))
 
         else:
-            var = Variable(varName, dataType, scope, memoryDir, value)
+            var = Variable(varName, dataType, scope, memoryDir)
             self.vars[varName] = var
 
     def print_table(self):
         for variable in self.vars:
-            print(variable)
-            print(self.vars[variable].memoryDir)
+            print(str(variable) + ': ' + str(self.vars[variable].dataType) + ', ' +
+                  str(self.vars[variable].scope) + ', ' + str(self.vars[variable].memoryDir))
