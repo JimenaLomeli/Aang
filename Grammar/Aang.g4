@@ -46,7 +46,7 @@ COMA: ',';
 VOID: 'void';
 CTE_BOOL: 'True' | 'False';
 ID: [a-zA-Z]+;
-CTE_INT: [1-9][0-9]*;
+CTE_INT: [0-9][0-9]*;
 CTE_CHAR: '\'' [A-Za-z] '\'';
 
 // Whitespace and comments

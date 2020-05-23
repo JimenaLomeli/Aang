@@ -2,12 +2,12 @@ programa ejemplo;
 int a,b,c,d;
 
 int empezar {
-	if(a + b > c * d) {
-		a = b +1;
+	if(a + b > c * 1) {
+		a = b +0;
 	} 
-	else {
-		a = d - c;
-	}
-	b= a * c + d;
+	#else {
+	#	a = d - c;
+	#}
+	#b= a * c + d;
 }
 fin

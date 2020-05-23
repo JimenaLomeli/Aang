@@ -1,6 +1,6 @@
 programa ejemplo;
-int a,c,f, i, j ,k;
-
+int a, b,c,f, i, j ,k;
+char toph;
 void uno(int a, int b){
  	if (a>b){
 		i= a+b*j+i;
@@ -10,14 +10,18 @@ void uno(int a, int b){
 	}
 }
 
-int Zuko (int a, int b){
+char Zuko (){
 	int c,d,e;
-	a = b * c + f / e;
-	return a;
+	char monterrey;
+	a = 1;
+	#a = c + f / e;
+	return monterrey;
 }
 
 
 int empezar {
+	
 	b = c + a;
+	toph = Zuko();
 }
 fin

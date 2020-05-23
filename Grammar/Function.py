@@ -27,8 +27,20 @@ class FunctionDir:
     def setReturnType(self, funcName, returnType):
         self.dictionary[funcName].returnType = returnType
 
+    def getReturnType(self, funcName):
+        return self.dictionary[funcName].returnType
+
     def addParameter(self, funcName, parameter):
         self.dictionary[funcName].parameters.append(parameter)
+
+    def ParameterList(self, funcName):
+        return self.dictionary[funcName].parameters.copy()
+
+    def numOfParameters(self, funcName):
+        return len(self.dictionary[funcName].parameters)
+
+    def checkVoid(self, funcName):
+        return self.dictionary[funcName].returnType == "void"
 
     def setLocalVariables(self, funcName, localVariables):
         self.dictionary[funcName].localVariables = localVariables

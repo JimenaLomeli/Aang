@@ -26,6 +26,8 @@ class AangCustomListener(AangListener):
     FilaQuadsMemoria = []
     PilaTipos = stack()
     PilaFunc = stack()
+    ParameterCounter = 0
+    TempParameters = []
     memoriaGlobal = memory(10000, 20000, 30000, 40000)
     memoriaConstante = memory(90000, 100000, 110000, 0)
 
@@ -40,6 +42,16 @@ class AangCustomListener(AangListener):
     localVarTable = VariableTable({})
 
     def enterPrograma(self, ctx: AangParser.ProgramaContext):
+        operator = "Goto"
+        rightOperand = None
+        leftOperand = None
+        result = "vacio"
+        quad = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        quad2 = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.FilaQuadsMemoria.append(quad2)
         pass
 
     def exitPrograma(self, ctx: AangParser.ProgramaContext):
@@ -465,8 +477,8 @@ class AangCustomListener(AangListener):
 
     # Enter a parse tree produced by AangParser#funcion.
     def enterFuncion(self, ctx: AangParser.FuncionContext):
-        self.functionDirectory.add_function(ctx.ID())
-        self.PilaFunc.push(ctx.ID())
+        self.functionDirectory.add_function(str(ctx.ID()))
+        self.PilaFunc.push(str(ctx.ID()))
         self.localVarTable = VariableTable({})
         self.functionDirectory.setStartPosition(
             self.PilaFunc.top(), len(self.FilaQuadsMemoria) + 1)
@@ -479,8 +491,8 @@ class AangCustomListener(AangListener):
         self.functionDirectory.setTemporalVariables(
             self.PilaFunc.top(), self.memoriaGlobal.t)
         self.PilaFunc.pop()
-        self.functionDirectory.print_table()
-        self.localVarTable.print_table()
+        # self.functionDirectory.print_table()
+        # self.localVarTable.print_table()
         self.memoriaGlobal.resetTemporales()
         pass
 
@@ -537,3 +549,149 @@ class AangCustomListener(AangListener):
             elif tipo == "char":
                 self.localVarTable.add_variable(
                     str(ctx.ID()), tipo, "local", self.functionDirectory.getNextChar(self.PilaFunc.top()))
+
+    # Enter a parse tree produced by AangParser#fun_regresar.
+    def enterFun_regresar(self, ctx: AangParser.Fun_regresarContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#fun_regresar.
+    def exitFun_regresar(self, ctx: AangParser.Fun_regresarContext):
+        if self.PilaO.top()[1] == self.functionDirectory.getReturnType(self.PilaFunc.top()):
+            operator = "RETURN"
+            rightOperand = None
+            leftOperand = None
+            result = self.PilaO.pop()
+            quad = Quadruple(
+                operator, rightOperand, leftOperand, result[0])
+            quad2 = Quadruple(
+                operator, rightOperand, leftOperand, result[2])
+            self.FilaQuads.append(quad)
+            self.FilaQuadsMemoria.append(quad2)
+        else:
+            raise Exception("The return type does not match with the function {}".format(
+                self.PilaFunc.top()))
+        pass
+
+    # Enter a parse tree produced by AangParser#principal.
+
+    def enterPrincipal(self, ctx: AangParser.PrincipalContext):
+        self.FilaQuads[0].result = len(self.FilaQuads) + 1
+        self.FilaQuadsMemoria[0].result = len(
+            self.FilaQuadsMemoria) + 1
+        pass
+
+    # Exit a parse tree produced by AangParser#principal.
+    def exitPrincipal(self, ctx: AangParser.PrincipalContext):
+        pass
+
+    # Enter a parse tree produced by AangParser#llamar_fun.
+    def enterLlamar_fun(self, ctx: AangParser.Llamar_funContext):
+        if self.functionDirectory.exist(str(ctx.ID())):
+            self.PilaFunc.push(str(ctx.ID()))
+            operator = "ERA"
+            rightOperand = None
+            leftOperand = None
+            result = str(ctx.ID())
+            quad = Quadruple(
+                operator, rightOperand, leftOperand, result)
+            quad2 = Quadruple(
+                operator, rightOperand, leftOperand, result)
+            self.FilaQuads.append(quad)
+            self.FilaQuadsMemoria.append(quad2)
+            # self.functionDirectory.print_table()
+            self.ParameterCounter = self.functionDirectory.numOfParameters(
+                str(ctx.ID()))
+
+            self.TempParameters = self.functionDirectory.ParameterList(
+                str(ctx.ID()))
+
+        pass
+
+    # Exit a parse tree produced by AangParser#llamar_fun.
+    def exitLlamar_fun(self, ctx: AangParser.Llamar_funContext):
+        if self.ParameterCounter > 0:
+            raise Exception(
+                "Less Arguments Passed in to {} Function".format(self.PilaFunc.top()))
+        pass
+
+    # Enter a parse tree produced by AangParser#argumentos.
+    def enterArgumentos(self, ctx: AangParser.ArgumentosContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#argumentos.
+    def exitArgumentos(self, ctx: AangParser.ArgumentosContext):
+        if ctx.exp() != None:
+
+            if self.ParameterCounter < 0:
+                raise Exception(
+                    "More Arguments Passed in to {} Function".format(self.PilaFunc.top()))
+            Result = self.PilaO.pop()
+            print(Result)
+            if Result[1] != self.TempParameters.pop():
+                raise Exception(
+                    "Types not match between Function call and Function parameter")
+
+        pass
+
+    # Enter a parse tree produced by AangParser#agregar_args.
+    def enterAgregar_args(self, ctx: AangParser.Agregar_argsContext):
+        self.ParameterCounter = self.ParameterCounter - 1
+        Result = self.PilaO.top()
+        operator = "PARAMETER"
+        rightOperand = Result[2]
+        leftOperand = None
+        result = ("Par" +
+                  str(self.functionDirectory.numOfParameters(
+                      self.PilaFunc.top()) - (self.ParameterCounter)))
+        quad = Quadruple(
+            operator, Result[0], leftOperand, result)
+        quad2 = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.FilaQuadsMemoria.append(quad2)
+        pass
+
+    # Exit a parse tree produced by AangParser#agregar_args.
+    def exitAgregar_args(self, ctx: AangParser.Agregar_argsContext):
+        if ctx.COMA() != None:
+            #self.ParameterCounter = self.ParameterCounter - 1
+            if self.ParameterCounter < 0:
+                raise Exception(
+                    "More Arguments Passed in to {} Function".format(self.PilaFunc.top()))
+            Result = self.PilaO.pop()
+            if Result[1] != self.TempParameters.pop():
+                raise Exception(
+                    "Types not match between Function call and Function parameter")
+        pass
+
+    # Enter a parse tree produced by AangParser#fc.
+    def enterFc(self, ctx: AangParser.FcContext):
+        operator = "GOSUB"
+        rightOperand = self.PilaFunc.top()
+        leftOperand = None
+        result = None
+        quad = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        quad2 = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.FilaQuadsMemoria.append(quad2)
+        if not self.functionDirectory.checkVoid(self.PilaFunc.top()):
+            operator = "="
+            rightOperand = self.PilaFunc.top()
+            leftOperand = None
+            self.PilaO.push((self.Avail.newElement(), self.functionDirectory.getReturnType(
+                self.PilaFunc.top()), self.memoriaGlobal.getTemporales()))
+            result = self.PilaO.top()
+            quad = Quadruple(
+                operator, rightOperand, leftOperand, result[0])
+            quad2 = Quadruple(
+                operator, rightOperand, leftOperand, result[2])
+            self.FilaQuads.append(quad)
+            self.FilaQuadsMemoria.append(quad2)
+        self.PilaFunc.pop()
+        pass
+
+    # Exit a parse tree produced by AangParser#fc.
+    def exitFc(self, ctx: AangParser.FcContext):
+        pass
