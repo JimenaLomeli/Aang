@@ -55,6 +55,7 @@ walker = ParseTreeWalker()
 try:
     tree = parser.programa()
 except SystemExit:
+    raise Exception("error")
     log.write("\n")
     log.close()
     sys.exit(1)

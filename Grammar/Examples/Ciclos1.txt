@@ -1,17 +1,12 @@
 programa ejemplo;
-int a, b,c,f, i, j ,k;
+int a, c, b,f, i, j ,k;
 char toph;
 void uno(int a, int b){
- 	if (a>b){
-		i= a+b*j+i;
- 		print ( i+j );
-	} else { 
-		print ( a + b );
-	}
+	a = a + b;
 }
 
-char Zuko (){
-	int c,d,e;
+char Zuko (int a, int b, int c){
+	int d,e;
 	char monterrey;
 	a = 1;
 	#a = c + f / e;
@@ -20,8 +15,8 @@ char Zuko (){
 
 
 int empezar {
-	
-	b = c + a;
-	toph = Zuko();
+	#b = c + a;
+	a = 1320253651;
+	toph = Zuko(1, 2, 34);
 }
 fin

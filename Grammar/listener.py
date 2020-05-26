@@ -101,7 +101,7 @@ class AangCustomListener(AangListener):
         operator = self.PilaOper.pop()
         leftOperand = self.PilaO.pop()
         rightOperand = None
-        if self.PilaFunc == None:
+        if len(self.PilaFunc.items) == 0:
             result = (str(ctx.ID()), self.varTable.vars[str(
                 ctx.ID())].dataType, self.varTable.vars[str(
                     ctx.ID())].memoryDir)
@@ -212,11 +212,15 @@ class AangCustomListener(AangListener):
                 self.PilaO.push((str(ctx.CTE_BOOL()), "bool", self.constTable.constants[str(
                     ctx.CTE_BOOL())].memoryDir))
         elif ctx.ID() != None:
-            if self.PilaFunc == None:
+            if len(self.PilaFunc.items) == 0:
+                self.varTable.exist(str(ctx.ID()))
                 self.PilaO.push(
                     (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
             else:
                 if self.localVarTable.get_local_variable(str(ctx.ID())):
+                    if str(ctx.ID()) == 'c':
+                        print('Entre Eldita')
+                        print(self.PilaFunc)
                     self.PilaO.push(
                         (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir))
                 else:
