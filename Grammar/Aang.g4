@@ -84,7 +84,7 @@ acciones:
 	| fun_regresar
 	| /* epsilon */;
 
-fun_regresar: RETURN exp PYCOMA;
+fun_regresar: RETURN exp PYCOMA | RETURN llamar_fun;
 
 asignacion: ID ASIGNAR a PYCOMA;
 a: expresion | llamar_fun;

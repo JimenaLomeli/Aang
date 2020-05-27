@@ -188,9 +188,6 @@ class AangCustomListener(AangListener):
                 operator, leftOperand[2], rightOperand[2], result[2])
             self.FilaQuadsMemoria.append(quad2)
 
-    def enterCte_var(self, ctx):
-        pass
-
     def exitCte_var(self, ctx: AangParser.Cte_varContext):
         if ctx.CTE_INT() != None:
             if not self.constTable.get_constant(ctx.CTE_INT()):
@@ -204,13 +201,14 @@ class AangCustomListener(AangListener):
                     str(ctx.CTE_CHAR()), "char", self.memoriaConstante.getChar())
                 self.PilaO.push((str(ctx.CTE_CHAR()), "char", self.constTable.constants[str(
                     ctx.CTE_CHAR())].memoryDir))
-        elif ctx.CTE_BOOL() != None:
 
+        elif ctx.CTE_BOOL() != None:
             if not self.constTable.get_constant(ctx.CTE_BOOL()):
                 self.constTable.add_constant(
                     str(ctx.CTE_BOOL()), "bool", self.memoriaConstante.getBooleanos())
                 self.PilaO.push((str(ctx.CTE_BOOL()), "bool", self.constTable.constants[str(
                     ctx.CTE_BOOL())].memoryDir))
+
         elif ctx.ID() != None:
             if len(self.PilaFunc.items) == 0:
                 self.varTable.exist(str(ctx.ID()))
@@ -218,9 +216,6 @@ class AangCustomListener(AangListener):
                     (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
             else:
                 if self.localVarTable.get_local_variable(str(ctx.ID())):
-                    if str(ctx.ID()) == 'c':
-                        print('Entre Eldita')
-                        print(self.PilaFunc)
                     self.PilaO.push(
                         (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir))
                 else:
@@ -228,15 +223,9 @@ class AangCustomListener(AangListener):
                     self.PilaO.push(
                         (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
 
-        # for constant in self.constTable.constants.values():
-        #    print(constant.memoryDir)
-
-    def enterTermino(self, ctx: AangParser.TerminoContext):
-        # print('Entre a Termino')
-        pass
 
     def exitTermino(self, ctx: AangParser.TerminoContext):
-        # print(self.PilaO.items)
+        
         if(self.PilaOper.top() == '-' or self.PilaOper.top() == '+'):
             operator = str(self.PilaOper.pop())
             rightOperand = self.PilaO.pop()
@@ -602,7 +591,6 @@ class AangCustomListener(AangListener):
                 operator, rightOperand, leftOperand, result)
             self.FilaQuads.append(quad)
             self.FilaQuadsMemoria.append(quad2)
-            # self.functionDirectory.print_table()
             self.ParameterCounter = self.functionDirectory.numOfParameters(
                 str(ctx.ID()))
 
@@ -618,11 +606,6 @@ class AangCustomListener(AangListener):
                 "Less Arguments Passed in to {} Function".format(self.PilaFunc.top()))
         pass
 
-    # Enter a parse tree produced by AangParser#argumentos.
-    def enterArgumentos(self, ctx: AangParser.ArgumentosContext):
-        pass
-
-    # Exit a parse tree produced by AangParser#argumentos.
     def exitArgumentos(self, ctx: AangParser.ArgumentosContext):
         if ctx.exp() != None:
 
@@ -630,7 +613,7 @@ class AangCustomListener(AangListener):
                 raise Exception(
                     "More Arguments Passed in to {} Function".format(self.PilaFunc.top()))
             Result = self.PilaO.pop()
-            print(Result)
+            
             if Result[1] != self.TempParameters.pop():
                 raise Exception(
                     "Types not match between Function call and Function parameter")
