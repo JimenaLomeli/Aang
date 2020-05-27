@@ -3,7 +3,8 @@ import pickle
 
 
 def main(argv):
-    # iniciar memoria
+
+    #======= INICIAR MEMORIA ========
     MemoriaConstante = {}
     for key in range(0, 1000):
         MemoriaConstante[key] = None
@@ -18,8 +19,7 @@ def main(argv):
     TEMPCHAR = 400
     TEMPBOOL = 700
 
-    # importar objetos de compilacion
-    print("Pongame 100 Eldita mi amor")
+    #======== IMPORTAR OBJETOS DE COMPILACION =======    
     pickle_in = open("Quadruplos.pickle", "rb")
     FilaQuadsMemoria = pickle.load(pickle_in)
     functionDirectory = pickle.load(pickle_in)
@@ -29,7 +29,7 @@ def main(argv):
     functionDirectory.print_table()
     constTable.print_table()
 
-    # poblar memoria constante
+    #======= POBLAR MEMORIA CONSTANTE ======
     for constantKey in constTable.constants.keys():
         memoryDir = constTable.constants[constantKey].memoryDir
         dataType = constTable.constants[constantKey].dataType
@@ -37,7 +37,7 @@ def main(argv):
             MemoriaConstante[memoryDir -
                              memoryStartingPoint['constInt']] = int(constantKey)
 
-    # Iniciar ejecucion
+    #====== INICIAR EJECUCION ======
     i = 0
 
     while i < len(FilaQuadsMemoria):
