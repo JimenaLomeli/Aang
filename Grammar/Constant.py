@@ -20,3 +20,6 @@ class ConstantTable:
         if constantValue not in self.constants:
             const = Constant(dataType, memoryDir)
             self.constants[constantValue] = const
+
+    def print_table(self):
+        print(self.constants)

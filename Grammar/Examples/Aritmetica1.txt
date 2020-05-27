@@ -1,9 +1,7 @@
 programa ejemplo;
 
-char blll;
 int empezar { 
-	blll = 'h'
-	#2/1+8/2-3/2
-	print(blll);
+	print(1+50);
+	print(8+8)
 }
 fin

@@ -56,7 +56,7 @@ WHITESPACE: [ \t\r\n]+ -> skip;
 /* GRAMMAR */
 
 programa: PROGRAMA ID PYCOMA p1 FIN;
-p1: variable p2 | funcion | principal;
+p1: variable p2 | funcion p2 | principal;
 p2: funcion p2 | principal;
 variable: tipo_id v;
 

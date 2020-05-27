@@ -15,6 +15,7 @@ from Constant import ConstantTable, Constant
 
 
 import sys
+import pickle
 
 
 class AangCustomListener(AangListener):
@@ -28,8 +29,8 @@ class AangCustomListener(AangListener):
     PilaFunc = stack()
     ParameterCounter = 0
     TempParameters = []
-    memoriaGlobal = memory(10000, 20000, 30000, 40000)
-    memoriaConstante = memory(90000, 100000, 110000, 0)
+    memoriaGlobal = memory(1000, 2000, 3000, 4000)
+    memoriaConstante = memory(9000, 10000, 11000, 0)
 
     # Memory address
     # global varTable
@@ -55,10 +56,26 @@ class AangCustomListener(AangListener):
         pass
 
     def exitPrograma(self, ctx: AangParser.ProgramaContext):
+        operator = "Exit"
+        rightOperand = None
+        leftOperand = None
+        result = None
+        quad = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        quad2 = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.FilaQuadsMemoria.append(quad2)
+
         for index, quad in enumerate(self.FilaQuads, 1):
             print(index, quad)
-        for index, quad in enumerate(self.FilaQuadsMemoria, 1):
-            print(index, quad)
+        # for index, quad in enumerate(self.FilaQuadsMemoria, 1):
+        #    print(index, quad)
+        pickle_out = open("Quadruplos.pickle", "wb")
+        pickle.dump(self.FilaQuadsMemoria, pickle_out)
+        pickle.dump(self.functionDirectory, pickle_out)
+        pickle.dump(self.constTable, pickle_out)
+        pickle_out.close()
 
     def enterE(self, ctx: AangParser.EContext):
         if ctx.MAYOR() != None:
@@ -223,9 +240,8 @@ class AangCustomListener(AangListener):
                     self.PilaO.push(
                         (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
 
-
     def exitTermino(self, ctx: AangParser.TerminoContext):
-        
+
         if(self.PilaOper.top() == '-' or self.PilaOper.top() == '+'):
             operator = str(self.PilaOper.pop())
             rightOperand = self.PilaO.pop()
@@ -497,7 +513,7 @@ class AangCustomListener(AangListener):
     def exitF(self, ctx: AangParser.FContext):
         if ctx.VOID() != None:
             self.functionDirectory.setReturnType(
-                self.PilaFunc.top(), ctx.VOID())
+                self.PilaFunc.top(), str(ctx.VOID()))
         else:
             self.functionDirectory.setReturnType(
                 self.PilaFunc.top(), self.PilaTipos.pop())
@@ -613,7 +629,7 @@ class AangCustomListener(AangListener):
                 raise Exception(
                     "More Arguments Passed in to {} Function".format(self.PilaFunc.top()))
             Result = self.PilaO.pop()
-            
+
             if Result[1] != self.TempParameters.pop():
                 raise Exception(
                     "Types not match between Function call and Function parameter")
