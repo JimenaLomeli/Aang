@@ -10,7 +10,7 @@ class Function:
         self.funcName = funcName
         self.startPosition = 0
         self.returnType = None
-        self.memory = memory(5000, 6000, 7000, 8000)
+        self.memory = memory(4000, 5000, 6000, 0)
         self.parameters = []
         self.localVariables = 0
         self.temporalVariables = 0

@@ -1,7 +1,7 @@
 programa ejemplo;
 
 int empezar { 
-	print(1+50);
-	print(8+8)
+	print(50 /5 + 5);
+	print(8+8 +8);
 }
 fin

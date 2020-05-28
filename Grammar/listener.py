@@ -29,8 +29,8 @@ class AangCustomListener(AangListener):
     PilaFunc = stack()
     ParameterCounter = 0
     TempParameters = []
-    memoriaGlobal = memory(1000, 2000, 3000, 4000)
-    memoriaConstante = memory(9000, 10000, 11000, 0)
+    memoriaGlobal = memory(1000, 2000, 3000, 10000)
+    memoriaConstante = memory(7000, 8000, 9000, 0)
 
     # Memory address
     # global varTable
@@ -42,7 +42,7 @@ class AangCustomListener(AangListener):
     constTable = ConstantTable()
     localVarTable = VariableTable({})
 
-#========================== PROGRAMA ==========================
+# ========================== PROGRAMA ==========================
 
     def enterPrograma(self, ctx: AangParser.ProgramaContext):
         operator = "Goto"
@@ -71,12 +71,11 @@ class AangCustomListener(AangListener):
 
         for index, quad in enumerate(self.FilaQuads, 1):
             print(index, quad)
-       
-        # for index, quad in enumerate(self.FilaQuadsMemoria, 1):
-        #    print(index, quad)
 
-        
-        #========== CUADRUPLOS PARA VM =========
+        for index, quad in enumerate(self.FilaQuadsMemoria, 1):
+            print(index, quad)
+
+        # ========== CUADRUPLOS PARA VM =========
         pickle_out = open("Quadruplos.pickle", "wb")
         pickle.dump(self.FilaQuadsMemoria, pickle_out)
         pickle.dump(self.functionDirectory, pickle_out)
@@ -114,8 +113,7 @@ class AangCustomListener(AangListener):
             self.FilaQuadsMemoria.append(quad2)
         pass
 
-#========================== ASIGNACION ==========================
-
+# ========================== ASIGNACION ==========================
 
     def enterAsignacion(self, ctx: AangParser.AsignacionContext):
         self.PilaOper.push(str(ctx.ASIGNAR()))
@@ -148,7 +146,8 @@ class AangCustomListener(AangListener):
         self.FilaQuadsMemoria.append(quad2)
 
 
-#========================== ESCRIBIR ==========================
+# ========================== ESCRIBIR ==========================
+
 
     def enterEscribir(self, ctx: AangParser.EscribirContext):
         self.PilaOper.push(str(ctx.PRINT()))
@@ -176,7 +175,7 @@ class AangCustomListener(AangListener):
             self.PilaOper.push(str(ctx.I_PARENTESIS()))
         pass
 
-    def exitFactor(self, ctx: AangParser.FactorContext):        
+    def exitFactor(self, ctx: AangParser.FactorContext):
         if ctx.D_PARENTESIS() != None:
             self.PilaOper.pop()
 
@@ -199,7 +198,8 @@ class AangCustomListener(AangListener):
             self.FilaQuadsMemoria.append(quad2)
 
 
-#========================== CONSTANTES ==========================
+# ========================== CONSTANTES ==========================
+
 
     def exitCte_var(self, ctx: AangParser.Cte_varContext):
         if ctx.CTE_INT() != None:
@@ -327,7 +327,8 @@ class AangCustomListener(AangListener):
                     str(ctx.ID()), self.PilaTipos.top(), "local", direccion)
 
 
-#========================== CONDICION ==========================
+# ========================== CONDICION ==========================
+
 
     def enterC1(self, ctx: AangParser.C1Context):
         if(self.PilaO.top()[1] != 'bool'):
@@ -379,7 +380,8 @@ class AangCustomListener(AangListener):
         pass
 
 
-#========================== CICLO ==========================
+# ========================== CICLO ==========================
+
 
     def enterCiclo1(self, ctx: AangParser.Ciclo1Context):
         self.PSaltos.push(len(self.FilaQuads) + 1)
@@ -436,7 +438,7 @@ class AangCustomListener(AangListener):
         self.functionDirectory.setTemporalVariables(
             self.PilaFunc.top(), self.memoriaGlobal.t)
         self.PilaFunc.pop()
-        self.memoriaGlobal.resetTemporales()
+        # self.memoriaGlobal.resetTemporales()
         pass
 
     def exitF(self, ctx: AangParser.FContext):
@@ -463,7 +465,6 @@ class AangCustomListener(AangListener):
                 self.localVarTable.add_variable(
                     str(ctx.ID()), tipo, "local", self.functionDirectory.getNextChar(self.PilaFunc.top()))
 
-
     def exitF2(self, ctx: AangParser.F2Context):
         if ctx.ID() != None:
             tipo = self.PilaTipos.pop()
@@ -478,7 +479,6 @@ class AangCustomListener(AangListener):
             elif tipo == "char":
                 self.localVarTable.add_variable(
                     str(ctx.ID()), tipo, "local", self.functionDirectory.getNextChar(self.PilaFunc.top()))
-
 
     def exitFun_regresar(self, ctx: AangParser.Fun_regresarContext):
         if self.PilaO.top()[1] == self.functionDirectory.getReturnType(self.PilaFunc.top()):
@@ -498,7 +498,8 @@ class AangCustomListener(AangListener):
         pass
 
 
-#========================== PROGRAMA MAIN ==========================
+# ========================== PROGRAMA MAIN ==========================
+
 
     def enterPrincipal(self, ctx: AangParser.PrincipalContext):
         self.FilaQuads[0].result = len(self.FilaQuads) + 1
@@ -506,7 +507,7 @@ class AangCustomListener(AangListener):
             self.FilaQuadsMemoria) + 1
         pass
 
-#========================== LLAMAR FUNCION  ==========================
+# ========================== LLAMAR FUNCION  ==========================
 
     def enterLlamar_fun(self, ctx: AangParser.Llamar_funContext):
         if self.functionDirectory.exist(str(ctx.ID())):
@@ -536,7 +537,8 @@ class AangCustomListener(AangListener):
         pass
 
 
-#========================== ARGUMENTOS ==========================
+# ========================== ARGUMENTOS ==========================
+
 
     def exitArgumentos(self, ctx: AangParser.ArgumentosContext):
         if ctx.exp() != None:
