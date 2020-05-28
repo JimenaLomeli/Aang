@@ -72,7 +72,9 @@ except SystemExit:
     log.close()
     sys.exit(1)
 
-
+if parser.getNumberOfSyntaxErrors() > 0:
+    print("Compilation ended due to syntax errors")
+    exit()
 # this function prints the grammar rules that were recognized
 #print(Trees.toStringTree(tree, None, parser))
 # output.close()
