@@ -29,16 +29,6 @@ def main(argv):
     # ======= INICIAR MEMORIA ========
     LlenarMemoria(Memoria)
 
-    MemoriaConstante = {}
-    for key in range(0, 1000):
-        MemoriaConstante[key] = None
-    MemoriaTemporal = {}
-    for key in range(0, 1000):
-        MemoriaTemporal[key] = None
-
-    memoryStartingPoint = {'temp': 4000, 'constInt': 9000,
-                           'constChar': 10000, 'constBool': 11000}
-
     # ======== IMPORTAR OBJETOS DE COMPILACION =======
     pickle_in = open("Quadruplos.pickle", "rb")
     FilaQuadsMemoria = pickle.load(pickle_in)
@@ -60,8 +50,12 @@ def main(argv):
             getMemorySection(memoryDir)[
                 getStartingPoint(memoryDir)] = constantKey
         elif dataType == 'bool':
-            getMemorySection(memoryDir)[getStartingPoint(
-                memoryDir)] = bool(constantKey)
+            if constantKey == 'True':
+                getMemorySection(memoryDir)[getStartingPoint(
+                    memoryDir)] = True
+            else:
+                getMemorySection(memoryDir)[getStartingPoint(
+                    memoryDir)] = False
 
     # ====== INICIAR EJECUCION ======
     i = 0
@@ -98,6 +92,75 @@ def main(argv):
             res = FilaQuadsMemoria[i].result
             getMemorySection(res)[getStartingPoint(res)] = int(getMemorySection(left)[getStartingPoint(left)] *
                                                                getMemorySection(right)[getStartingPoint(right)])
+
+        elif FilaQuadsMemoria[i].operator == '=':
+            left = FilaQuadsMemoria[i].leftOp
+            res = FilaQuadsMemoria[i].result
+            getMemorySection(res)[getStartingPoint(res)] = getMemorySection(left)[
+                getStartingPoint(left)]
+
+        elif FilaQuadsMemoria[i].operator == '==':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] == getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
+
+        elif FilaQuadsMemoria[i].operator == '!=':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] != getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
+
+        elif FilaQuadsMemoria[i].operator == '<':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] < getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
+
+        elif FilaQuadsMemoria[i].operator == '>':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] > getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
+
+        elif FilaQuadsMemoria[i].operator == '&&':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] and getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
+
+        elif FilaQuadsMemoria[i].operator == '||':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] or getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
+
+        elif FilaQuadsMemoria[i].operator == '>':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] > getMemorySection(right)[getStartingPoint(right)]:
+                getMemorySection(res)[getStartingPoint(res)] = True
+            else:
+                getMemorySection(res)[getStartingPoint(res)] = False
 
         elif FilaQuadsMemoria[i].operator == 'print':
             left = FilaQuadsMemoria[i].leftOp

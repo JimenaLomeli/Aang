@@ -95,6 +95,8 @@ e:
 	| MENOR exp
 	| IGUAL exp
 	| DIFERENTE exp
+	| Y_SIMBOLO exp
+	| O_SIMBOLO exp
 	| /* epsilon */;
 exp: termino e1;
 e1: SUMA termino e1 | RESTA termino e1 | /* epsilon */;

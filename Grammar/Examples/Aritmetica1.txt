@@ -1,7 +1,14 @@
 programa ejemplo;
-
-int empezar { 
-	print(50 /5 + 5);
+int a, b;
+char d;
+bool e, r;
+int empezar { 	
+	a = 5;
+	b = 4;
+	d = 'C';
+	e = False;
+	r = False;
+	print(a < b || a == b);
 	print(8+8 +8);
 }
 fin

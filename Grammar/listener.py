@@ -72,8 +72,8 @@ class AangCustomListener(AangListener):
         for index, quad in enumerate(self.FilaQuads, 1):
             print(index, quad)
 
-        for index, quad in enumerate(self.FilaQuadsMemoria, 1):
-            print(index, quad)
+        # for index, quad in enumerate(self.FilaQuadsMemoria, 1):
+        #    print(index, quad)
 
         # ========== CUADRUPLOS PARA VM =========
         pickle_out = open("Quadruplos.pickle", "wb")
@@ -91,10 +91,14 @@ class AangCustomListener(AangListener):
             self.PilaOper.push(str(ctx.IGUAL()))
         if ctx.DIFERENTE() != None:
             self.PilaOper.push(str(ctx.DIFERENTE()))
+        if ctx.Y_SIMBOLO() != None:
+            self.PilaOper.push(str(ctx.Y_SIMBOLO()))
+        if ctx.O_SIMBOLO() != None:
+            self.PilaOper.push(str(ctx.O_SIMBOLO()))
         pass
 
     def exitE(self, ctx: AangParser.EContext):
-        if ctx.MAYOR() != None or ctx.MENOR() != None or ctx.IGUAL() != None or ctx.DIFERENTE() != None:
+        if ctx.MAYOR() != None or ctx.MENOR() != None or ctx.IGUAL() != None or ctx.DIFERENTE() != None or ctx.Y_SIMBOLO() != None or ctx.O_SIMBOLO() != None:
             operator = self.PilaOper.pop()
             leftOperand = self.PilaO.pop()
             rightOperand = self.PilaO.pop()
