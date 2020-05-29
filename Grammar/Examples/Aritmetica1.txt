@@ -2,13 +2,23 @@ programa ejemplo;
 int a, b;
 char d;
 bool e, r;
+
+void toph () {
+	a = 4;
+	#while (a < b){
+	#	print(a);
+	#	a = a + 1;
+	#}
+}
+
 int empezar { 	
-	a = 5;
-	b = 4;
-	d = 'C';
-	e = False;
-	r = False;
-	print(a < b || a == b);
-	print(8+8 +8);
+	a = 0;
+	b = 3;
+	#d = 'C';
+	#e = False;
+	#r = False;
+	toph();
+	print('d');
+
 }
 fin

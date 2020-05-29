@@ -1,3 +1,5 @@
+from stack import stack
+
 import sys
 import pickle
 
@@ -57,6 +59,9 @@ def main(argv):
                 getMemorySection(memoryDir)[getStartingPoint(
                     memoryDir)] = False
 
+    # ====== GENERAR STACK ======
+    PilaIndex = stack()
+
     # ====== INICIAR EJECUCION ======
     i = 0
 
@@ -64,6 +69,12 @@ def main(argv):
         if FilaQuadsMemoria[i].operator == 'Goto':
             i = FilaQuadsMemoria[i].result - 1
             i = i - 1
+
+        elif FilaQuadsMemoria[i].operator == 'GotoF':
+            left = FilaQuadsMemoria[i].leftOp
+            if not getMemorySection(left)[getStartingPoint(left)]:
+                i = FilaQuadsMemoria[i].result - 1
+                i = i - 1
 
         elif FilaQuadsMemoria[i].operator == '+':
             left = FilaQuadsMemoria[i].leftOp
@@ -165,6 +176,21 @@ def main(argv):
         elif FilaQuadsMemoria[i].operator == 'print':
             left = FilaQuadsMemoria[i].leftOp
             print(getMemorySection(left)[getStartingPoint(left)])
+
+        elif FilaQuadsMemoria[i].operator == 'ERA':
+            pass
+
+        elif FilaQuadsMemoria[i].operator == 'GOSUB':
+            left = FilaQuadsMemoria[i].leftOp
+            PilaIndex.push(i + 1)
+            i = functionDirectory.getStartPosition(left) - 2
+            pass
+
+        elif FilaQuadsMemoria[i].operator == 'EndFunc':
+            i = PilaIndex.pop() - 1
+
+        elif FilaQuadsMemoria[i].operator == 'PARAMETER':
+            i = PilaIndex.pop() - 1
 
         i = i + 1
 

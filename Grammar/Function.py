@@ -24,6 +24,9 @@ class FunctionDir:
     def setStartPosition(self, funcName, startPosition):
         self.dictionary[funcName].startPosition = startPosition
 
+    def getStartPosition(self, funcName):
+        return self.dictionary[funcName].startPosition
+
     def setReturnType(self, funcName, returnType):
         self.dictionary[funcName].returnType = returnType
 

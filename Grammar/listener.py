@@ -72,8 +72,8 @@ class AangCustomListener(AangListener):
         for index, quad in enumerate(self.FilaQuads, 1):
             print(index, quad)
 
-        # for index, quad in enumerate(self.FilaQuadsMemoria, 1):
-        #    print(index, quad)
+        for index, quad in enumerate(self.FilaQuadsMemoria, 1):
+            print(index, quad)
 
         # ========== CUADRUPLOS PARA VM =========
         pickle_out = open("Quadruplos.pickle", "wb")
@@ -81,6 +81,31 @@ class AangCustomListener(AangListener):
         pickle.dump(self.functionDirectory, pickle_out)
         pickle.dump(self.constTable, pickle_out)
         pickle_out.close()
+
+    def enterExpresion(self, ctx: AangParser.ExpresionContext):
+        if ctx.Y_SIMBOLO() != None:
+            self.PilaOper.push(str(ctx.Y_SIMBOLO()))
+        if ctx.O_SIMBOLO() != None:
+            self.PilaOper.push(str(ctx.O_SIMBOLO()))
+
+    def exitExpresion(self, ctx: AangParser.ExpresionContext):
+        if ctx.Y_SIMBOLO() != None or ctx.O_SIMBOLO() != None:
+            operator = self.PilaOper.pop()
+            leftOperand = self.PilaO.pop()
+            rightOperand = self.PilaO.pop()
+            Type = SemanticCube().cube[rightOperand[1],
+                                       leftOperand[1], operator]
+            if Type == Types().ERROR:
+                raise Exception(Types().ERROR)
+            self.PilaO.push((self.Avail.newElement(), Type,
+                             self.memoriaGlobal.getTemporales()))
+            result = self.PilaO.top()
+            quad = Quadruple(
+                operator, rightOperand[0], leftOperand[0], result[0])
+            self.FilaQuads.append(quad)
+            quad2 = Quadruple(
+                operator, rightOperand[2], leftOperand[2], result[2])
+            self.FilaQuadsMemoria.append(quad2)
 
     def enterE(self, ctx: AangParser.EContext):
         if ctx.MAYOR() != None:
@@ -91,14 +116,10 @@ class AangCustomListener(AangListener):
             self.PilaOper.push(str(ctx.IGUAL()))
         if ctx.DIFERENTE() != None:
             self.PilaOper.push(str(ctx.DIFERENTE()))
-        if ctx.Y_SIMBOLO() != None:
-            self.PilaOper.push(str(ctx.Y_SIMBOLO()))
-        if ctx.O_SIMBOLO() != None:
-            self.PilaOper.push(str(ctx.O_SIMBOLO()))
         pass
 
     def exitE(self, ctx: AangParser.EContext):
-        if ctx.MAYOR() != None or ctx.MENOR() != None or ctx.IGUAL() != None or ctx.DIFERENTE() != None or ctx.Y_SIMBOLO() != None or ctx.O_SIMBOLO() != None:
+        if ctx.MAYOR() != None or ctx.MENOR() != None or ctx.IGUAL() != None or ctx.DIFERENTE() != None:
             operator = self.PilaOper.pop()
             leftOperand = self.PilaO.pop()
             rightOperand = self.PilaO.pop()
@@ -379,9 +400,9 @@ class AangCustomListener(AangListener):
 
     def exitC2(self, ctx: AangParser.C2Context):
         if ctx.ELSE() != None:
-            self.FilaQuads[self.PSaltos.pop(
-            )-1].result = len(self.FilaQuads) + 1
-        pass
+            salto = self.PSaltos.pop()-1
+            self.FilaQuads[salto].result = len(self.FilaQuads) + 1
+            self.FilaQuadsMemoria[salto].result = len(self.FilaQuads) + 1
 
 
 # ========================== CICLO ==========================
@@ -442,8 +463,17 @@ class AangCustomListener(AangListener):
         self.functionDirectory.setTemporalVariables(
             self.PilaFunc.top(), self.memoriaGlobal.t)
         self.PilaFunc.pop()
+        operator = "EndFunc"
+        rightOperand = None
+        leftOperand = None
+        result = None
+        quad = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        quad2 = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.FilaQuadsMemoria.append(quad2)
         # self.memoriaGlobal.resetTemporales()
-        pass
 
     def exitF(self, ctx: AangParser.FContext):
         if ctx.VOID() != None:

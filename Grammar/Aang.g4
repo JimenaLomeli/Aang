@@ -89,14 +89,12 @@ fun_regresar: RETURN exp PYCOMA | RETURN llamar_fun;
 asignacion: ID ASIGNAR a PYCOMA;
 a: expresion | llamar_fun;
 
-expresion: exp e;
+expresion: exp e | exp e Y_SIMBOLO expresion | exp e O_SIMBOLO expresion;
 e:
 	MAYOR exp
 	| MENOR exp
 	| IGUAL exp
 	| DIFERENTE exp
-	| Y_SIMBOLO exp
-	| O_SIMBOLO exp
 	| /* epsilon */;
 exp: termino e1;
 e1: SUMA termino e1 | RESTA termino e1 | /* epsilon */;
