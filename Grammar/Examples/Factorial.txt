@@ -1,0 +1,24 @@
+programa factorial;
+int a;
+int n;
+
+int factorial(int n) {
+    int b;
+   if(n < 0) {
+       return 0;
+    }
+
+   if(n > 1) {
+    b = factorial(n-1);
+	a = n * b;
+       return a;
+   }
+   return 1;
+}
+int empezar { 
+    n=7;
+
+    print(factorial(n));
+
+}
+fin

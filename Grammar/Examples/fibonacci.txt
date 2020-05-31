@@ -1,0 +1,25 @@
+programa fibonacci;
+
+int x, i;
+
+int fib (int x) {
+    int a, b, c;
+   if(x == 1 || x==0 ) {
+      return(x);
+   } else {
+       a = fib(x-1);
+       b = fib(x-2);
+       c = a + b;
+      return c;
+   }
+}
+
+int empezar { 
+    x=10;
+    i=0;
+    while(i < x) {
+      print(fib(i));
+      i=i+1;
+   }
+}
+fin

@@ -2,7 +2,7 @@ from stack import stack
 
 import sys
 import pickle
-
+import copy
 
 Memoria = {
     "Global": {
@@ -27,6 +27,8 @@ Memoria = {
     }
 }
 
+MemoriaGeneral = {}
+
 # ======== IMPORTAR OBJETOS DE COMPILACION =======
 pickle_in = open("Quadruplos.pickle", "rb")
 FilaQuadsMemoria = pickle.load(pickle_in)
@@ -41,6 +43,8 @@ constTable = pickle.load(pickle_in)
 PilaIndex = stack()
 PilaDir = stack()
 PilaParam = stack()
+PilaDormir = stack()
+ParamList = []
 
 
 def main(argv):
@@ -184,40 +188,52 @@ def main(argv):
         elif FilaQuadsMemoria[i].operator == 'ERA':
             res = FilaQuadsMemoria[i].result
             createParamDict(res)
+            # print(Memoria["Local"])
+            # mandarDormir()
+            # print(PilaDormir.top())
             pass
 
         elif FilaQuadsMemoria[i].operator == 'GOSUB':
             left = FilaQuadsMemoria[i].leftOp
             PilaIndex.push(i + 1)
             i = functionDirectory.getStartPosition(left) - 2
+            mandarDormir()
+            reiniciarMemoria()
+            insertParameters()
             pass
 
         elif FilaQuadsMemoria[i].operator == 'EndFunc':
             i = PilaIndex.pop() - 1
+            PilaParam.pop()
+            mandarDespertar()
 
         elif FilaQuadsMemoria[i].operator == 'PARAMETER':
             left = FilaQuadsMemoria[i].leftOp
+            ParamList.append((left, getMemorySection(
+                left)[getStartingPoint(left)]))
             # Get memory section
-            localMemory = getLocalMemory(left)
+            #localMemory = getLocalMemory(left)
             # Get the number of next parameter
-            number = getNumberType(left)
-            # print(number)
+            #number = getNumberType(left)
             # get Next Available direction
-            localDir = nextLocalAvail(localMemory, number)
+            #localDir = nextLocalAvail(localMemory, number)
             # asign the memory
-            localMemory[localDir] = getMemorySection(
-                left)[getStartingPoint(left)]
+            # localMemory[localDir] = getMemorySection(
+            #    left)[getStartingPoint(left)]
 
         elif FilaQuadsMemoria[i].operator == 'RETURN':
             res = FilaQuadsMemoria[i].result
             PilaDir.push(res)
             i = PilaIndex.pop() - 1
+            PilaParam.pop()
+            # print(Memoria["Local"])
 
         elif FilaQuadsMemoria[i].operator == '=*':
             res = FilaQuadsMemoria[i].result
             functionResult = PilaDir.pop()
             getMemorySection(res)[getStartingPoint(res)] = getMemorySection(
                 functionResult)[getStartingPoint(functionResult)]
+            mandarDespertar()
 
         i = i + 1
 
@@ -247,13 +263,13 @@ def createParamDict(Function):
 
 
 def IniciarMemoria(Memoria):
-    for key in range(0, 50):
+    for key in range(0, 5):
         Memoria[key] = None
 
 
 def nextLocalAvail(Memoria, Number):
     Number = Number - 1
-    for key in range(Number, 50):
+    for key in range(Number, 5):
         if Memoria[key] == None:
             return key
 
@@ -284,6 +300,14 @@ def getMemoryType(direccion):
 
 def getMemorySection(direccion):
     return Memoria[getMemoryScope(direccion)][getMemoryType(direccion)]
+
+
+def getMemoryDormir(direccion):
+    memoriaDormida = copy.deepcopy(PilaDormir.top())
+    MemoriaGeneral = copy.deepcopy(Memoria)
+    MemoriaGeneral["Local"].clear()
+    MemoriaGeneral["Local"].update(memoriaDormida)
+    return MemoriaGeneral[getMemoryScope(direccion)][getMemoryType(direccion)]
 
 
 def getNumberType(direccion):
@@ -324,6 +348,37 @@ def getStartingPoint(direccion):
         return direccion - 12000
     else:
         raise Exception("Out of Range")
+
+
+def insertParameters():
+    for param in ParamList:
+        # Get memory section
+        localMemory = getLocalMemory(param[0])
+        # Get the number of next parameter
+        number = getNumberType(param[0])
+        # get Next Available direction
+        localDir = nextLocalAvail(localMemory, number)
+        # asign the memory
+        localMemory[localDir] = param[1]
+    ParamList.clear()
+
+
+def mandarDormir():
+    # Guardar en el stack
+    memoriaDormida = copy.deepcopy(Memoria["Local"])
+    PilaDormir.push(memoriaDormida)
+
+
+def reiniciarMemoria():
+    # Reiniciar Memoria Local
+    IniciarMemoria(Memoria["Local"]["Entero"])
+    IniciarMemoria(Memoria["Local"]["Char"])
+    IniciarMemoria(Memoria["Local"]["Bool"])
+
+
+def mandarDespertar():
+    Memoria["Local"].clear()
+    Memoria["Local"].update(PilaDormir.pop())
 
 
 if __name__ == '__main__':
