@@ -613,8 +613,7 @@ class AangCustomListener(AangListener):
                 raise Exception(
                     "More Arguments Passed in to {} Function".format(self.PilaFuncParam.top()))
             Result = self.PilaO.pop()
-
-            if Result[1] != self.TempParameters.pop():
+            if Result[1] != self.TempParameters.pop(0):
                 raise Exception(
                     "Types not match between Function call and Function parameter")
 

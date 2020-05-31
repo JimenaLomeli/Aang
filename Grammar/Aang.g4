@@ -81,7 +81,7 @@ acciones:
 	| ciclo1 acciones
 	| escribir acciones
 	| llamar_fun acciones
-	| fun_regresar
+	| fun_regresar acciones
 	| /* epsilon */;
 
 fun_regresar: RETURN exp PYCOMA | RETURN llamar_fun;

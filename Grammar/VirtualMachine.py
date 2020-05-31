@@ -27,21 +27,26 @@ Memoria = {
     }
 }
 
+# ======== IMPORTAR OBJETOS DE COMPILACION =======
+pickle_in = open("Quadruplos.pickle", "rb")
+FilaQuadsMemoria = pickle.load(pickle_in)
+functionDirectory = pickle.load(pickle_in)
+constTable = pickle.load(pickle_in)
+# for index, quad in enumerate(FilaQuadsMemoria, 1):
+#    print(index, quad)
+# functionDirectory.print_table()
+# constTable.print_table()
+
+# ====== GENERAR STACK ======
+PilaIndex = stack()
+PilaDir = stack()
+PilaParam = stack()
+
 
 def main(argv):
 
     # ======= INICIAR MEMORIA ========
     LlenarMemoria(Memoria)
-
-    # ======== IMPORTAR OBJETOS DE COMPILACION =======
-    pickle_in = open("Quadruplos.pickle", "rb")
-    FilaQuadsMemoria = pickle.load(pickle_in)
-    functionDirectory = pickle.load(pickle_in)
-    constTable = pickle.load(pickle_in)
-    # for index, quad in enumerate(FilaQuadsMemoria, 1):
-    #    print(index, quad)
-    # functionDirectory.print_table()
-    # constTable.print_table()
 
     # ======= POBLAR MEMORIA CONSTANTE ======
     for constantKey in constTable.constants.keys():
@@ -60,10 +65,6 @@ def main(argv):
             else:
                 getMemorySection(memoryDir)[getStartingPoint(
                     memoryDir)] = False
-
-    # ====== GENERAR STACK ======
-    PilaIndex = stack()
-    PilaDir = stack()
 
     # ====== INICIAR EJECUCION ======
     i = 0
@@ -181,6 +182,8 @@ def main(argv):
             print(getMemorySection(left)[getStartingPoint(left)])
 
         elif FilaQuadsMemoria[i].operator == 'ERA':
+            res = FilaQuadsMemoria[i].result
+            createParamDict(res)
             pass
 
         elif FilaQuadsMemoria[i].operator == 'GOSUB':
@@ -196,8 +199,11 @@ def main(argv):
             left = FilaQuadsMemoria[i].leftOp
             # Get memory section
             localMemory = getLocalMemory(left)
+            # Get the number of next parameter
+            number = getNumberType(left)
+            # print(number)
             # get Next Available direction
-            localDir = nextLocalAvail(localMemory)
+            localDir = nextLocalAvail(localMemory, number)
             # asign the memory
             localMemory[localDir] = getMemorySection(
                 left)[getStartingPoint(left)]
@@ -205,6 +211,7 @@ def main(argv):
         elif FilaQuadsMemoria[i].operator == 'RETURN':
             res = FilaQuadsMemoria[i].result
             PilaDir.push(res)
+            i = PilaIndex.pop() - 1
 
         elif FilaQuadsMemoria[i].operator == '=*':
             res = FilaQuadsMemoria[i].result
@@ -230,13 +237,23 @@ def LlenarMemoria(Memoria):
     IniciarMemoria(Memoria["Temporal"]["Bool"])
 
 
+def createParamDict(Function):
+    ParameterNumb = {
+        "Entero": functionDirectory.getIntParam(Function),
+        "Bool": functionDirectory.getBoolParam(Function),
+        "Char": functionDirectory.getCharParam(Function)
+    }
+    PilaParam.push(ParameterNumb)
+
+
 def IniciarMemoria(Memoria):
     for key in range(0, 50):
         Memoria[key] = None
 
 
-def nextLocalAvail(Memoria):
-    for key in range(0, 50):
+def nextLocalAvail(Memoria, Number):
+    Number = Number - 1
+    for key in range(Number, 50):
         if Memoria[key] == None:
             return key
 
@@ -258,15 +275,22 @@ def getMemoryType(direccion):
     if direccion >= 1000 and direccion <= 1999 or direccion >= 4000 and direccion <= 4999 or direccion >= 7000 and direccion <= 7999 or direccion >= 10000 and direccion <= 10999:
         return "Entero"
     elif direccion >= 2000 and direccion <= 2999 or direccion >= 5000 and direccion <= 5999 or direccion >= 8000 and direccion <= 8999 or direccion >= 11000 and direccion <= 11999:
-        return "Char"
-    elif direccion >= 3000 and direccion <= 3999 or direccion >= 6000 and direccion <= 6999 or direccion >= 9000 and direccion <= 9999 or direccion >= 12000 and direccion <= 12999:
         return "Bool"
+    elif direccion >= 3000 and direccion <= 3999 or direccion >= 6000 and direccion <= 6999 or direccion >= 9000 and direccion <= 9999 or direccion >= 12000 and direccion <= 12999:
+        return "Char"
     else:
         raise Exception("Out of Range")
 
 
 def getMemorySection(direccion):
     return Memoria[getMemoryScope(direccion)][getMemoryType(direccion)]
+
+
+def getNumberType(direccion):
+    number = PilaParam.top()[getMemoryType(direccion)]
+    PilaParam.top()[getMemoryType(
+        direccion)] = PilaParam.top()[getMemoryType(direccion)] - 1
+    return number
 
 
 def getLocalMemory(direccion):

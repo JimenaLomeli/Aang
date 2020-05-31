@@ -14,6 +14,9 @@ class Function:
         self.parameters = []
         self.localVariables = 0
         self.temporalVariables = 0
+        self.intParameters = 0
+        self.boolParameters = 0
+        self.charParameters = 0
 
 
 class FunctionDir:
@@ -30,11 +33,26 @@ class FunctionDir:
     def setReturnType(self, funcName, returnType):
         self.dictionary[funcName].returnType = returnType
 
+    def getIntParam(self, funcName):
+        return self.dictionary[funcName].intParameters
+
+    def getCharParam(self, funcName):
+        return self.dictionary[funcName].charParameters
+
+    def getBoolParam(self, funcName):
+        return self.dictionary[funcName].boolParameters
+
     def getReturnType(self, funcName):
         return self.dictionary[funcName].returnType
 
     def addParameter(self, funcName, parameter):
         self.dictionary[funcName].parameters.append(parameter)
+        if parameter == 'int':
+            self.dictionary[funcName].intParameters = self.dictionary[funcName].intParameters + 1
+        elif parameter == 'char':
+            self.dictionary[funcName].charParameters = self.dictionary[funcName].charParameters + 1
+        elif parameter == 'bool':
+            self.dictionary[funcName].boolParameters = self.dictionary[funcName].boolParameters + 1
 
     def ParameterList(self, funcName):
         return self.dictionary[funcName].parameters.copy()
@@ -86,5 +104,5 @@ class FunctionDir:
     def print_table(self):
         for func in self.dictionary:
             print(str(func) + ': ' + str(self.dictionary[func].startPosition) + ", " + str(self.dictionary[func].returnType) + ", " + str(len(self.dictionary[func].parameters)) + ", " + str(
-                self.dictionary[func].localVariables) + ", " + str(self.dictionary[func].temporalVariables))
+                self.dictionary[func].localVariables) + ", " + str(self.dictionary[func].temporalVariables) + ", " + str(self.dictionary[func].intParameters) + ", " + str(self.dictionary[func].charParameters) + ", " + str(self.dictionary[func].boolParameters))
             print(self.dictionary[func].parameters)
