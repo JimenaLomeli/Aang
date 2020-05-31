@@ -27,10 +27,12 @@ class AangCustomListener(AangListener):
     FilaQuadsMemoria = []
     PilaTipos = stack()
     PilaFunc = stack()
+    PilaFuncParam = stack()
     ParameterCounter = 0
     TempParameters = []
-    memoriaGlobal = memory(1000, 2000, 3000, 10000)
+    memoriaGlobal = memory(1000, 2000, 3000, 0)
     memoriaConstante = memory(7000, 8000, 9000, 0)
+    memoriaTemporal = memory(10000, 11000, 12000, 0)
 
     # Memory address
     # global varTable
@@ -97,8 +99,15 @@ class AangCustomListener(AangListener):
                                        leftOperand[1], operator]
             if Type == Types().ERROR:
                 raise Exception(Types().ERROR)
-            self.PilaO.push((self.Avail.newElement(), Type,
-                             self.memoriaGlobal.getTemporales()))
+            elif Type == Types().INT:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getEntera()))
+            elif Type == Types().CHAR:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getChar()))
+            elif Type == Types().BOOL:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getBooleanos()))
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, rightOperand[0], leftOperand[0], result[0])
@@ -127,8 +136,15 @@ class AangCustomListener(AangListener):
                                        leftOperand[1], operator]
             if Type == Types().ERROR:
                 raise Exception(Types().ERROR)
-            self.PilaO.push((self.Avail.newElement(), Type,
-                             self.memoriaGlobal.getTemporales()))
+            elif Type == Types().INT:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getEntera()))
+            elif Type == Types().CHAR:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getChar()))
+            elif Type == Types().BOOL:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getBooleanos()))
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, rightOperand[0], leftOperand[0], result[0])
@@ -212,8 +228,15 @@ class AangCustomListener(AangListener):
                                        leftOperand[1], operator]
             if Type == Types().ERROR:
                 raise Exception(Types().ERROR)
-            self.PilaO.push((self.Avail.newElement(), Type,
-                             self.memoriaGlobal.getTemporales()))
+            elif Type == Types().INT:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getEntera()))
+            elif Type == Types().CHAR:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getChar()))
+            elif Type == Types().BOOL:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getBooleanos()))
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, leftOperand[0], rightOperand[0], result[0])
@@ -248,6 +271,8 @@ class AangCustomListener(AangListener):
                     ctx.CTE_BOOL())].memoryDir))
 
         elif ctx.ID() != None:
+            # if str(ctx.ID()) == 'b':
+            #    print(self.PilaFunc.items)
             if len(self.PilaFunc.items) == 0:
                 self.varTable.exist(str(ctx.ID()))
                 self.PilaO.push(
@@ -270,8 +295,15 @@ class AangCustomListener(AangListener):
                                        leftOperand[1], operator]
             if Type == Types().ERROR:
                 raise Exception(Types().ERROR)
-            self.PilaO.push((self.Avail.newElement(), Type,
-                             self.memoriaGlobal.getTemporales()))
+            elif Type == Types().INT:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getEntera()))
+            elif Type == Types().CHAR:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getChar()))
+            elif Type == Types().BOOL:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getBooleanos()))
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, leftOperand[0], rightOperand[0], result[0])
@@ -545,7 +577,7 @@ class AangCustomListener(AangListener):
 
     def enterLlamar_fun(self, ctx: AangParser.Llamar_funContext):
         if self.functionDirectory.exist(str(ctx.ID())):
-            self.PilaFunc.push(str(ctx.ID()))
+            self.PilaFuncParam.push(str(ctx.ID()))
             operator = "ERA"
             rightOperand = None
             leftOperand = None
@@ -567,7 +599,7 @@ class AangCustomListener(AangListener):
     def exitLlamar_fun(self, ctx: AangParser.Llamar_funContext):
         if self.ParameterCounter > 0:
             raise Exception(
-                "Less Arguments Passed in to {} Function".format(self.PilaFunc.top()))
+                "Less Arguments Passed in to {} Function".format(self.PilaFuncParam.top()))
         pass
 
 
@@ -579,7 +611,7 @@ class AangCustomListener(AangListener):
 
             if self.ParameterCounter < 0:
                 raise Exception(
-                    "More Arguments Passed in to {} Function".format(self.PilaFunc.top()))
+                    "More Arguments Passed in to {} Function".format(self.PilaFuncParam.top()))
             Result = self.PilaO.pop()
 
             if Result[1] != self.TempParameters.pop():
@@ -596,7 +628,7 @@ class AangCustomListener(AangListener):
         leftOperand = None
         result = ("Par" +
                   str(self.functionDirectory.numOfParameters(
-                      self.PilaFunc.top()) - (self.ParameterCounter)))
+                      self.PilaFuncParam.top()) - (self.ParameterCounter)))
         quad = Quadruple(
             operator, Result[0], leftOperand, result)
         quad2 = Quadruple(
@@ -609,16 +641,16 @@ class AangCustomListener(AangListener):
         if ctx.COMA() != None:
             if self.ParameterCounter < 0:
                 raise Exception(
-                    "More Arguments Passed in to {} Function".format(self.PilaFunc.top()))
+                    "More Arguments Passed in to {} Function".format(self.PilaFuncParam.top()))
             Result = self.PilaO.pop()
-            if Result[1] != self.TempParameters.pop():
+            if Result[1] != self.TempParameters.pop(0):
                 raise Exception(
                     "Types not match between Function call and Function parameter")
         pass
 
     def enterFc(self, ctx: AangParser.FcContext):
         operator = "GOSUB"
-        rightOperand = self.PilaFunc.top()
+        rightOperand = self.PilaFuncParam.top()
         leftOperand = None
         result = None
         quad = Quadruple(
@@ -627,12 +659,22 @@ class AangCustomListener(AangListener):
             operator, rightOperand, leftOperand, result)
         self.FilaQuads.append(quad)
         self.FilaQuadsMemoria.append(quad2)
-        if not self.functionDirectory.checkVoid(self.PilaFunc.top()):
-            operator = "="
-            rightOperand = self.PilaFunc.top()
+        if not self.functionDirectory.checkVoid(self.PilaFuncParam.top()):
+            operator = "=*"
+            rightOperand = self.PilaFuncParam.top()
             leftOperand = None
-            self.PilaO.push((self.Avail.newElement(), self.functionDirectory.getReturnType(
-                self.PilaFunc.top()), self.memoriaGlobal.getTemporales()))
+            Type = self.functionDirectory.getReturnType(
+                self.PilaFuncParam.top())
+            # self.PilaO.push((self.Avail.newElement(), Type, self.memoriaGlobal.getTemporales()))
+            if Type == Types().INT:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getEntera()))
+            elif Type == Types().CHAR:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getChar()))
+            elif Type == Types().BOOL:
+                self.PilaO.push((self.Avail.newElement(), Type,
+                                 self.memoriaTemporal.getBooleanos()))
             result = self.PilaO.top()
             quad = Quadruple(
                 operator, rightOperand, leftOperand, result[0])
@@ -640,5 +682,5 @@ class AangCustomListener(AangListener):
                 operator, rightOperand, leftOperand, result[2])
             self.FilaQuads.append(quad)
             self.FilaQuadsMemoria.append(quad2)
-        self.PilaFunc.pop()
+        self.PilaFuncParam.pop()
         pass

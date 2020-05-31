@@ -3,22 +3,18 @@ int a, b;
 char d;
 bool e, r;
 
-void toph () {
-	a = 4;
-	#while (a < b){
-	#	print(a);
-	#	a = a + 1;
-	#}
+int toph (int b, bool a, bool d) {
+	return 10;
 }
 
 int empezar { 	
-	a = 0;
+	a = 2;
 	b = 3;
-	#d = 'C';
+	d = 'C';
 	#e = False;
 	#r = False;
-	toph();
-	print('d');
-
+	print(b);
+	print(toph(1, True, True));
+	print(b);
 }
 fin

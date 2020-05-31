@@ -21,7 +21,9 @@ Memoria = {
         "Bool": {}
     },
     "Temporal": {
-        "All": {}
+        "Entero": {},
+        "Char": {},
+        "Bool": {}
     }
 }
 
@@ -61,6 +63,7 @@ def main(argv):
 
     # ====== GENERAR STACK ======
     PilaIndex = stack()
+    PilaDir = stack()
 
     # ====== INICIAR EJECUCION ======
     i = 0
@@ -190,7 +193,24 @@ def main(argv):
             i = PilaIndex.pop() - 1
 
         elif FilaQuadsMemoria[i].operator == 'PARAMETER':
-            i = PilaIndex.pop() - 1
+            left = FilaQuadsMemoria[i].leftOp
+            # Get memory section
+            localMemory = getLocalMemory(left)
+            # get Next Available direction
+            localDir = nextLocalAvail(localMemory)
+            # asign the memory
+            localMemory[localDir] = getMemorySection(
+                left)[getStartingPoint(left)]
+
+        elif FilaQuadsMemoria[i].operator == 'RETURN':
+            res = FilaQuadsMemoria[i].result
+            PilaDir.push(res)
+
+        elif FilaQuadsMemoria[i].operator == '=*':
+            res = FilaQuadsMemoria[i].result
+            functionResult = PilaDir.pop()
+            getMemorySection(res)[getStartingPoint(res)] = getMemorySection(
+                functionResult)[getStartingPoint(functionResult)]
 
         i = i + 1
 
@@ -205,12 +225,20 @@ def LlenarMemoria(Memoria):
     IniciarMemoria(Memoria["Constante"]["Entero"])
     IniciarMemoria(Memoria["Constante"]["Char"])
     IniciarMemoria(Memoria["Constante"]["Bool"])
-    IniciarMemoria(Memoria["Temporal"])
+    IniciarMemoria(Memoria["Temporal"]["Entero"])
+    IniciarMemoria(Memoria["Temporal"]["Char"])
+    IniciarMemoria(Memoria["Temporal"]["Bool"])
 
 
 def IniciarMemoria(Memoria):
-    for key in range(0, 10):
+    for key in range(0, 50):
         Memoria[key] = None
+
+
+def nextLocalAvail(Memoria):
+    for key in range(0, 50):
+        if Memoria[key] == None:
+            return key
 
 
 def getMemoryScope(direccion):
@@ -227,20 +255,22 @@ def getMemoryScope(direccion):
 
 
 def getMemoryType(direccion):
-    if direccion >= 1000 and direccion <= 1999 or direccion >= 4000 and direccion <= 4999 or direccion >= 7000 and direccion <= 7999:
+    if direccion >= 1000 and direccion <= 1999 or direccion >= 4000 and direccion <= 4999 or direccion >= 7000 and direccion <= 7999 or direccion >= 10000 and direccion <= 10999:
         return "Entero"
-    elif direccion >= 2000 and direccion <= 2999 or direccion >= 5000 and direccion <= 5999 or direccion >= 8000 and direccion <= 8999:
+    elif direccion >= 2000 and direccion <= 2999 or direccion >= 5000 and direccion <= 5999 or direccion >= 8000 and direccion <= 8999 or direccion >= 11000 and direccion <= 11999:
         return "Char"
-    elif direccion >= 3000 and direccion <= 3999 or direccion >= 6000 and direccion <= 6999 or direccion >= 9000 and direccion <= 9999:
+    elif direccion >= 3000 and direccion <= 3999 or direccion >= 6000 and direccion <= 6999 or direccion >= 9000 and direccion <= 9999 or direccion >= 12000 and direccion <= 12999:
         return "Bool"
-    elif direccion >= 10000 and direccion <= 12999:
-        return "All"
     else:
         raise Exception("Out of Range")
 
 
 def getMemorySection(direccion):
     return Memoria[getMemoryScope(direccion)][getMemoryType(direccion)]
+
+
+def getLocalMemory(direccion):
+    return Memoria["Local"][getMemoryType(direccion)]
 
 
 def getStartingPoint(direccion):
@@ -262,8 +292,12 @@ def getStartingPoint(direccion):
         return direccion - 8000
     elif direccion >= 9000 and direccion <= 9999:
         return direccion - 9000
-    elif direccion >= 10000 and direccion <= 12999:
+    elif direccion >= 10000 and direccion <= 10999:
         return direccion - 10000
+    elif direccion >= 11000 and direccion <= 11999:
+        return direccion - 11000
+    elif direccion >= 12000 and direccion <= 12999:
+        return direccion - 12000
     else:
         raise Exception("Out of Range")
 
