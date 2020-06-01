@@ -28,6 +28,7 @@ class AangCustomListener(AangListener):
     PilaTipos = stack()
     PilaFunc = stack()
     PilaFuncParam = stack()
+    PilaArr = stack()
     ParameterCounter = 0
     TempParameters = []
     memoriaGlobal = memory(1000, 2000, 3000, 0)
@@ -318,6 +319,10 @@ class AangCustomListener(AangListener):
         if ctx.DIVISION() != None:
             self.PilaOper.push(str(ctx.DIVISION()))
 
+
+# ========================== VARIABLES ==========================
+
+
     def exitVariable(self, ctx: AangParser.VariableContext):
         self.PilaTipos.pop()
         pass
@@ -355,7 +360,45 @@ class AangCustomListener(AangListener):
                         self.PilaFunc.top())
                 self.localVarTable.add_variable(
                     str(ctx.ID()), self.PilaTipos.top(), "local", direccion)
+            if ctx.I_LLAVE() != None:
+                self.PilaArr.push(str(ctx.ID()))
+                if self.PilaFunc.top() == None:
+                    self.varTable.setIsArray(str(ctx.ID()))
+                else:
+                    self.localVarTable.setIsArray(str(ctx.ID()))
         pass
+
+    def enterV3(self, ctx: AangParser.VContext):
+        if self.PilaArr.top() != None:
+            if self.PilaFunc.top() == None:
+                # El limite superior es igual al tamaño del arreglo menos 1
+                self.varTable.setLSup(
+                    self.PilaArr.top(), self.PilaO.pop()[0])
+                if self.PilaTipos.top() == 'int':
+                    self.memoriaGlobal.i = self.memoriaGlobal.i + \
+                        self.varTable.getLSup(self.PilaArr.top()) - 1
+                if self.PilaTipos.top() == 'bool':
+                    self.memoriaGlobal.b = self.memoriaGlobal.b + \
+                        self.varTable.getLSup(self.PilaArr.top()) - 1
+                if self.PilaTipos.top() == 'char':
+                    self.memoriaGlobal.c = self.memoriaGlobal.c + \
+                        self.varTable.getLSup(self.PilaArr.top()) - 1
+            else:
+                # El limite superior es igual al tamaño del arreglo menos 1
+                self.localVarTable.setLSup(
+                    str(ctx.ID()), self.PilaO.pop()[0])
+                self.localVarTable.setLSup(
+                    self.PilaArr.top(), self.PilaO.pop()[0])
+                if self.PilaTipos.top() == 'int':
+                    self.memoriaGlobal.i = self.memoriaGlobal.i + \
+                        self.localVarTable.getLSup(self.PilaArr.top()) - 1
+                if self.PilaTipos.top() == 'bool':
+                    self.memoriaGlobal.b = self.memoriaGlobal.b + \
+                        self.localVarTable.getLSup(self.PilaArr.top()) - 1
+                if self.PilaTipos.top() == 'char':
+                    self.memoriaGlobal.c = self.memoriaGlobal.c + \
+                        self.localVarTable.getLSup(self.PilaArr.top()) - 1
+            self.PilaArr.pop()
 
     def enterV1(self, ctx: AangParser.V1Context):
         if ctx.ID() != None:
@@ -382,6 +425,12 @@ class AangCustomListener(AangListener):
                         self.PilaFunc.top())
                 self.localVarTable.add_variable(
                     str(ctx.ID()), self.PilaTipos.top(), "local", direccion)
+            if ctx.I_LLAVE() != None:
+                self.PilaArr.push(str(ctx.ID()))
+                if self.PilaFunc.top() == None:
+                    self.varTable.setIsArray(str(ctx.ID()))
+                else:
+                    self.localVarTable.setIsArray(str(ctx.ID()))
 
 
 # ========================== CONDICION ==========================
@@ -571,6 +620,7 @@ class AangCustomListener(AangListener):
         self.FilaQuads[0].result = len(self.FilaQuads) + 1
         self.FilaQuadsMemoria[0].result = len(
             self.FilaQuadsMemoria) + 1
+        self.varTable.print_table()
         pass
 
 # ========================== LLAMAR FUNCION  ==========================

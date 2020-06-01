@@ -39,8 +39,11 @@ I_PARENTESIS: '(';
 D_PARENTESIS: ')';
 I_CORCHETE: '{';
 D_CORCHETE: '}';
+I_LLAVE: '[';
+D_LLAVE: ']';
 PYCOMA: ';';
 COMA: ',';
+
 
 //Data Types
 VOID: 'void';
@@ -62,9 +65,10 @@ variable: tipo_id v;
 
 principal: tipo_id EMPEZAR I_CORCHETE bloque D_CORCHETE;
 
-v: ID v1 PYCOMA v2;
-v1: COMA ID v1 | /* epsilon */;
+v: ID v1 PYCOMA v2 | ID I_LLAVE exp D_LLAVE v3 v1 PYCOMA v2;
+v1: COMA ID v1 | COMA ID I_LLAVE exp D_LLAVE v3 v1 | /* epsilon */;
 v2: variable | /* epsilon */;
+v3: /* epsilon */;
 
 tipo_id: INT | CHAR | BOOL;
 

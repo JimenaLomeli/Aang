@@ -80,6 +80,15 @@ class AangListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AangParser#v3.
+    def enterV3(self, ctx:AangParser.V3Context):
+        pass
+
+    # Exit a parse tree produced by AangParser#v3.
+    def exitV3(self, ctx:AangParser.V3Context):
+        pass
+
+
     # Enter a parse tree produced by AangParser#tipo_id.
     def enterTipo_id(self, ctx:AangParser.Tipo_idContext):
         pass

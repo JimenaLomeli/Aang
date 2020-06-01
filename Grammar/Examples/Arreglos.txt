@@ -1,0 +1,9 @@
+programa ejemplo;
+int i, A[9], j;
+char a, B[9], c;
+bool v, g[9], n;
+
+int empezar { 	
+    print('c');
+}
+fin

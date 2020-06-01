@@ -3,12 +3,21 @@ from antlr4 import *
 # Store the variable table structure
 
 
+class arrayNode:
+    def __init__(self):
+        self.inferior = 0
+        self.superior = 0
+        self.k = 0
+
+
 class Variable:
     def __init__(self, varName, dataType, scope, memoryDir):
         self.varName = varName
         self.dataType = dataType
         self.scope = scope
         self.memoryDir = memoryDir
+        self.isArray = False
+        self.node = arrayNode()
 
 
 class VariableTable:
@@ -29,8 +38,17 @@ class VariableTable:
             raise Exception(
                 "{} does not exist in the directory".format(varName))
 
+    def setLSup(self, varName, limite):
+        self.vars[varName].node.superior = limite
+
+    def getLSup(self, varName):
+        return self.vars[varName].node.superior
+
     def get_local_variable(self, varName):
         return varName in self.vars.keys()
+
+    def setIsArray(self, varName):
+        self.vars[varName].isArray = True
 
     def add_variable(self, varName, dataType, scope, memoryDir):
         if varName in self.vars:
@@ -47,4 +65,4 @@ class VariableTable:
     def print_table(self):
         for variable in self.vars:
             print(str(variable) + ': ' + str(self.vars[variable].dataType) + ', ' +
-                  str(self.vars[variable].scope) + ', ' + str(self.vars[variable].memoryDir))
+                  str(self.vars[variable].scope) + ', ' + str(self.vars[variable].memoryDir) + ', ' + str(self.vars[variable].isArray) + ', ' + str(self.vars[variable].node.inferior) + ', ' + str(self.vars[variable].node.superior) + ', ' + str(self.vars[variable].node.k))
