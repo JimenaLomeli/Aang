@@ -161,23 +161,71 @@ class AangCustomListener(AangListener):
         self.PilaOper.push(str(ctx.ASIGNAR()))
 
     def exitAsignacion(self, ctx: AangParser.AsignacionContext):
-        operator = self.PilaOper.pop()
         leftOperand = self.PilaO.pop()
+        # if ctx.I_LLAVE() != None:
+        #     operator = "Ver"
+        #     leftOperandd = self.PilaO.top()
+        #     rightOperand = 0
+        #     print(type(leftOperandd[0]))
+        #     if len(self.PilaFunc.items) == 0:
+        #         self.varTable.exist(str(ctx.ID()))
+        #         result = self.varTable.getLSup(str(ctx.ID()))
+        #         self.PilaO.push(
+        #             (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperandd[0]))
+        #     else:
+        #         if self.localVarTable.get_local_variable(str(ctx.ID())):
+        #             self.localVarTable.exist(str(ctx.ID()))
+        #             result = self.localVarTable.getLSup(str(ctx.ID()))
+        #             self.PilaO.push(
+        #                 (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir + leftOperandd[0]))
+        #         else:
+        #             self.varTable.exist(str(ctx.ID()))
+        #             result = self.varTable.getLSup(str(ctx.ID()))
+        #             self.PilaO.push(
+        #                 (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperandd[0]))
+        #     quad = Quadruple(
+        #         operator, leftOperandd[0], rightOperand, result)
+        #     self.FilaQuads.append(quad)
+        #     quad2 = Quadruple(
+        #         operator, leftOperandd[2], rightOperand, result)
+        #     self.FilaQuadsMemoria.append(quad2)
+
+        operator = self.PilaOper.pop()
         rightOperand = None
-        if len(self.PilaFunc.items) == 0:
-            result = (str(ctx.ID()), self.varTable.vars[str(
-                ctx.ID())].dataType, self.varTable.vars[str(
-                    ctx.ID())].memoryDir)
-        else:
-            if self.localVarTable.get_local_variable(str(ctx.ID())):
-                result = (str(ctx.ID()), self.localVarTable.vars[str(
-                    ctx.ID())].dataType, self.localVarTable.vars[str(
-                        ctx.ID())].memoryDir)
+        if ctx.I_LLAVE() != None:
+            offset = self.PilaO.pop()
+            # print(offset)
+            if len(self.PilaFunc.items) == 0:
+                self.varTable.exist(str(ctx.ID()))
+                result = (str(ctx.ID()), self.varTable.vars[str(
+                    ctx.ID())].dataType, self.varTable.vars[str(
+                        ctx.ID())].memoryDir + offset[0])
             else:
+                if self.localVarTable.get_local_variable(str(ctx.ID())):
+                    result = (str(ctx.ID()), self.localVarTable.vars[str(
+                        ctx.ID())].dataType, self.localVarTable.vars[str(
+                            ctx.ID())].memoryDir + offset[0])
+                else:
+                    self.varTable.exist(str(ctx.ID()))
+                    result = (str(ctx.ID()), self.varTable.vars[str(
+                        ctx.ID())].dataType, self.varTable.vars[str(
+                            ctx.ID())].memoryDir + offset[0])
+        else:
+            if len(self.PilaFunc.items) == 0:
                 self.varTable.exist(str(ctx.ID()))
                 result = (str(ctx.ID()), self.varTable.vars[str(
                     ctx.ID())].dataType, self.varTable.vars[str(
                         ctx.ID())].memoryDir)
+            else:
+                if self.localVarTable.get_local_variable(str(ctx.ID())):
+                    result = (str(ctx.ID()), self.localVarTable.vars[str(
+                        ctx.ID())].dataType, self.localVarTable.vars[str(
+                            ctx.ID())].memoryDir)
+                else:
+                    self.varTable.exist(str(ctx.ID()))
+                    result = (str(ctx.ID()), self.varTable.vars[str(
+                        ctx.ID())].dataType, self.varTable.vars[str(
+                            ctx.ID())].memoryDir)
         if SemanticCube().cube[result[1], leftOperand[1], operator] == Types().ERROR:
             raise Exception(Types().ERROR)
 
@@ -189,7 +237,6 @@ class AangCustomListener(AangListener):
 
 
 # ========================== ESCRIBIR ==========================
-
 
     def enterEscribir(self, ctx: AangParser.EscribirContext):
         self.PilaOper.push(str(ctx.PRINT()))
@@ -249,6 +296,9 @@ class AangCustomListener(AangListener):
 
 # ========================== CONSTANTES ==========================
 
+    def enterCte_var(self, ctx):
+        if ctx.I_LLAVE() != None:
+            self.PilaOper.push(str(ctx.I_LLAVE()))
 
     def exitCte_var(self, ctx: AangParser.Cte_varContext):
         if ctx.CTE_INT() != None:
@@ -271,7 +321,7 @@ class AangCustomListener(AangListener):
                 self.PilaO.push((str(ctx.CTE_BOOL()), "bool", self.constTable.constants[str(
                     ctx.CTE_BOOL())].memoryDir))
 
-        elif ctx.ID() != None:
+        elif ctx.ID() != None and ctx.I_LLAVE() == None:
             # if str(ctx.ID()) == 'b':
             #    print(self.PilaFunc.items)
             if len(self.PilaFunc.items) == 0:
@@ -286,6 +336,39 @@ class AangCustomListener(AangListener):
                     self.varTable.exist(str(ctx.ID()))
                     self.PilaO.push(
                         (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
+        elif ctx.ID() != None and ctx.I_LLAVE() != None:
+            operator = "Ver"
+            leftOperand = self.PilaO.pop()
+            rightOperand = 0
+            # print(leftOperand)
+            if len(self.PilaFunc.items) == 0:
+                self.varTable.exist(str(ctx.ID()))
+                result = self.varTable.getLSup(str(ctx.ID()))
+                self.PilaO.push(
+                    (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperand[0]))
+            else:
+                if self.localVarTable.get_local_variable(str(ctx.ID())):
+                    self.localVarTable.exist(str(ctx.ID()))
+                    result = self.localVarTable.getLSup(str(ctx.ID()))
+                    self.PilaO.push(
+                        (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir + leftOperand[0]))
+                else:
+                    self.varTable.exist(str(ctx.ID()))
+                    result = self.varTable.getLSup(str(ctx.ID()))
+                    self.PilaO.push(
+                        (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperand[0]))
+            quad = Quadruple(
+                operator, leftOperand[0], rightOperand, result)
+            self.FilaQuads.append(quad)
+            quad2 = Quadruple(
+                operator, leftOperand[2], rightOperand, result)
+            self.FilaQuadsMemoria.append(quad2)
+        #    print(quad)
+        #    print(quad2)
+        # for index, quad in enumerate(self.FilaQuads, 1):
+        #    print(index, quad)
+        if ctx.I_LLAVE() != None:
+            self.PilaOper.pop()
 
     def exitTermino(self, ctx: AangParser.TerminoContext):
         if(self.PilaOper.top() == '-' or self.PilaOper.top() == '+'):
@@ -319,9 +402,11 @@ class AangCustomListener(AangListener):
         if ctx.DIVISION() != None:
             self.PilaOper.push(str(ctx.DIVISION()))
 
+    def enterAcciones(self, ctx):
+        pass
+
 
 # ========================== VARIABLES ==========================
-
 
     def exitVariable(self, ctx: AangParser.VariableContext):
         self.PilaTipos.pop()
@@ -435,7 +520,6 @@ class AangCustomListener(AangListener):
 
 # ========================== CONDICION ==========================
 
-
     def enterC1(self, ctx: AangParser.C1Context):
         if(self.PilaO.top()[1] != 'bool'):
             raise Exception(
@@ -487,7 +571,6 @@ class AangCustomListener(AangListener):
 
 
 # ========================== CICLO ==========================
-
 
     def enterCiclo1(self, ctx: AangParser.Ciclo1Context):
         self.PSaltos.push(len(self.FilaQuads) + 1)
@@ -615,12 +698,10 @@ class AangCustomListener(AangListener):
 
 # ========================== PROGRAMA MAIN ==========================
 
-
     def enterPrincipal(self, ctx: AangParser.PrincipalContext):
         self.FilaQuads[0].result = len(self.FilaQuads) + 1
         self.FilaQuadsMemoria[0].result = len(
             self.FilaQuadsMemoria) + 1
-        self.varTable.print_table()
         pass
 
 # ========================== LLAMAR FUNCION  ==========================
@@ -654,7 +735,6 @@ class AangCustomListener(AangListener):
 
 
 # ========================== ARGUMENTOS ==========================
-
 
     def exitArgumentos(self, ctx: AangParser.ArgumentosContext):
         if ctx.exp() != None:

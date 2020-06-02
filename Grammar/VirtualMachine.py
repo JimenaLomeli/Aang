@@ -235,6 +235,13 @@ def main(argv):
                 functionResult)[getStartingPoint(functionResult)]
             mandarDespertar()
 
+        elif FilaQuadsMemoria[i].operator == 'Ver':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result
+            if getMemorySection(left)[getStartingPoint(left)] < right or getMemorySection(left)[getStartingPoint(left)] >= res:
+                raise Exception("No esta en los limites el Arreglo")
+
         i = i + 1
 
 

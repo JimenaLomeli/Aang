@@ -90,7 +90,7 @@ acciones:
 
 fun_regresar: RETURN exp PYCOMA | RETURN llamar_fun;
 
-asignacion: ID ASIGNAR a PYCOMA;
+asignacion: ID ASIGNAR a PYCOMA | ID I_LLAVE exp D_LLAVE ASIGNAR a PYCOMA;
 a: expresion | llamar_fun;
 
 expresion: exp e | exp e Y_SIMBOLO expresion | exp e O_SIMBOLO expresion;
@@ -124,7 +124,7 @@ escribir: PRINT I_PARENTESIS es D_PARENTESIS PYCOMA;
 es: expresion es2 | CTE_CHAR es2 | llamar_fun;
 es2: COMA es | /* epsilon */;
 
-cte_var: CTE_INT| CTE_CHAR | ID | CTE_BOOL;
+cte_var: CTE_INT| CTE_CHAR | ID | CTE_BOOL | ID I_LLAVE expresion D_LLAVE;
 
 llamar_fun: ID I_PARENTESIS argumentos D_PARENTESIS fc;
 
