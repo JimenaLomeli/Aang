@@ -1,13 +1,7 @@
 programa ejemplo;
-int a,b,c,d,e, f, g, h, i, j, k;
-#char d,f,e;
-bool lore;
+int a;
+
 int empezar {
-	print((a+b)*c/(d+e)-f*g>h*(i+j)-k);
-	#print(a*(b+c/(d-e)));
-	#lore= a + b < c * d;
-	#print(a);
-	#c=6;
-	#return(a+b/c);
+	print(1111);
 }
 fin
