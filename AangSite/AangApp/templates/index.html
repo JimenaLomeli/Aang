@@ -1,3 +1,45 @@
-{% block content %}
-  <h1>Hola</h1>
-{% endblock %}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <title>Aang Code Compiler</title>
+    <link rel="stylesheet" type= "text/css" href="{% static 'css/styles.css' %}" />
+  
+  </head>
+
+  <body>
+    <h4>Lenguaje Aang</h4>
+    
+    <hr>
+    <br>
+
+    <div class="container">	
+
+      <div class="row">
+        <div class="input-container">
+          <textarea id="custom-input" class="input-textarea" placeholder="Escribir aquí el código"></textarea>
+        </div>
+
+      <div class="row">
+        <div class="run-text-code">
+          <button class="button" id="runcode" title="Compilar y Ejecutar">Compilar y Ejecutar</button>
+        </div>
+      </div> 
+
+      <div class="outputbox">
+          <div class="outputerror">
+            <div class="errorkey"></div>
+              <pre class="errormessage"></pre>
+            </div>
+
+          <div class="io-show">
+            <b>Output</b>
+            <pre class="output-text"> </pre>
+          </div>
+      </div>
+
+    </div>
+  </body>
+</html>
