@@ -20,5 +20,5 @@ Para compilar la gramatica utilizar el siguiente comando dentro de la carpeta de
   
 Para correr el programa Aang (Es necesario compilar primero la gramatica):
 ```bash
-  $ python3 AangMain.py Grammar/<file-name>
+  $ python3 AangMain.py Grammar/Examples/<file-name>
 ```
