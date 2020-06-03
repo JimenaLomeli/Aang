@@ -152,6 +152,33 @@ class AangListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AangParser#pintar.
+    def enterPintar(self, ctx:AangParser.PintarContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#pintar.
+    def exitPintar(self, ctx:AangParser.PintarContext):
+        pass
+
+
+    # Enter a parse tree produced by AangParser#mover.
+    def enterMover(self, ctx:AangParser.MoverContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#mover.
+    def exitMover(self, ctx:AangParser.MoverContext):
+        pass
+
+
+    # Enter a parse tree produced by AangParser#cambiar.
+    def enterCambiar(self, ctx:AangParser.CambiarContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#cambiar.
+    def exitCambiar(self, ctx:AangParser.CambiarContext):
+        pass
+
+
     # Enter a parse tree produced by AangParser#fun_regresar.
     def enterFun_regresar(self, ctx:AangParser.Fun_regresarContext):
         pass

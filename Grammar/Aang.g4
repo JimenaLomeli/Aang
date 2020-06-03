@@ -32,6 +32,13 @@ PRINT: 'print';
 RETURN: 'return';
 PROGRAMA: 'programa';
 EMPEZAR: 'empezar';
+PINTAR: 'pintar';
+MOVER: 'mover';
+CAMBIAR_DIRECCION: 'cambiarDireccion';
+ARRIBA: 'arriba';
+ABAJO: 'abajo';
+DERECHA: 'derecha';
+IZQUIERDA: 'izquierda';
 FIN: 'fin';
 
 //Separators
@@ -86,7 +93,20 @@ acciones:
 	| escribir acciones
 	| llamar_fun acciones
 	| fun_regresar acciones
+	| pintar acciones
+	| mover acciones
+	| cambiar acciones
 	| /* epsilon */;
+
+pintar: PINTAR I_PARENTESIS D_PARENTESIS PYCOMA;
+
+mover: MOVER I_PARENTESIS exp D_PARENTESIS PYCOMA;
+
+cambiar: 
+	CAMBIAR_DIRECCION I_PARENTESIS ARRIBA D_PARENTESIS PYCOMA
+	| CAMBIAR_DIRECCION I_PARENTESIS ABAJO D_PARENTESIS PYCOMA
+	| CAMBIAR_DIRECCION I_PARENTESIS DERECHA D_PARENTESIS PYCOMA
+	| CAMBIAR_DIRECCION I_PARENTESIS IZQUIERDA D_PARENTESIS PYCOMA;
 
 fun_regresar: RETURN exp PYCOMA | RETURN llamar_fun;
 
@@ -124,7 +144,7 @@ escribir: PRINT I_PARENTESIS es D_PARENTESIS PYCOMA;
 es: expresion es2 | CTE_CHAR es2 | llamar_fun;
 es2: COMA es | /* epsilon */;
 
-cte_var: CTE_INT| CTE_CHAR | ID | CTE_BOOL | ID I_LLAVE expresion D_LLAVE;
+cte_var: CTE_INT| CTE_CHAR | ID | CTE_BOOL | ID I_LLAVE exp D_LLAVE;
 
 llamar_fun: ID I_PARENTESIS argumentos D_PARENTESIS fc;
 

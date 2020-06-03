@@ -1,7 +1,8 @@
 from stack import stack
+from MatrizColores import MatrizColores
 
 import sys
-import pickle
+import pickle as pickle
 import copy
 
 Memoria = {
@@ -45,6 +46,9 @@ PilaDir = stack()
 PilaParam = stack()
 PilaDormir = stack()
 ParamList = []
+
+# ====== GENERAR MATRIZ DE COLORES ======
+MatColor = MatrizColores()
 
 
 def main(argv):
@@ -212,11 +216,11 @@ def main(argv):
             ParamList.append((left, getMemorySection(
                 left)[getStartingPoint(left)]))
             # Get memory section
-            #localMemory = getLocalMemory(left)
+            # localMemory = getLocalMemory(left)
             # Get the number of next parameter
-            #number = getNumberType(left)
+            # number = getNumberType(left)
             # get Next Available direction
-            #localDir = nextLocalAvail(localMemory, number)
+            # localDir = nextLocalAvail(localMemory, number)
             # asign the memory
             # localMemory[localDir] = getMemorySection(
             #    left)[getStartingPoint(left)]
@@ -248,6 +252,27 @@ def main(argv):
             res = FilaQuadsMemoria[i].result
             if getMemorySection(left)[getStartingPoint(left)] < right or getMemorySection(left)[getStartingPoint(left)] >= res:
                 raise Exception("No esta en los limites el Arreglo")
+
+        elif FilaQuadsMemoria[i].operator == 'pintar':
+            MatColor.Paint()
+            pass
+
+        elif FilaQuadsMemoria[i].operator == 'mover':
+            left = FilaQuadsMemoria[i].leftOp
+            MatColor.Mover(getMemorySection(left)[getStartingPoint(left)])
+            pass
+
+        elif FilaQuadsMemoria[i].operator == 'cambiar':
+            left = FilaQuadsMemoria[i].leftOp
+            MatColor.Cambiar(left)
+            pass
+
+        elif FilaQuadsMemoria[i].operator == 'Exit':
+            MatColor.printMat()
+            MatColor.translate()
+            print(MatColor.context)
+            with open("MatColors.pickle", "wb") as f:
+                pickle.dump(MatColor.context, f)
 
         i = i + 1
 

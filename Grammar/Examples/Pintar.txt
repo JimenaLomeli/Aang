@@ -1,0 +1,11 @@
+programa ejemplo;
+int a;
+
+int empezar {
+    a = 5;
+    pintar();
+    cambiarDireccion(abajo);
+    mover(2);
+    pintar();
+}
+fin

@@ -1,1 +1,13 @@
-dvsdv
+programa ejemplo;
+int a;
+
+int empezar {
+    a = 5;
+    pintar();
+    cambiarDireccion(abajo);
+    mover(1);
+    pintar();
+    mover(1);
+    pintar();
+}
+fin
