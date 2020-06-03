@@ -19,6 +19,7 @@ hr {
 
 .container{
 	width:50%;
+	float: left;
 }
 
 .button {
@@ -39,21 +40,4 @@ hr {
 .button:hover {
 	background-color: #008CBA;
 	color: white;
-}
-
-#editor {
-	margin: 0;
-	padding: 0;
-	height: 400px;
-}
-
-.input-textarea {
-	border: 1px solid #aaa;
-	width: 100%;
-	height: 100px;
-}
-
-.outputbox {
-	margin-top: 20px;
-	background-color: #fff;
 }

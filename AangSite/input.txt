@@ -1,7 +1,1 @@
-programa ejemplo;
-int a;
-
-int empezar {
-	print(1111);
-}
-fin
+dvsdv
