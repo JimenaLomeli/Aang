@@ -161,55 +161,65 @@ class AangCustomListener(AangListener):
         self.PilaOper.push(str(ctx.ASIGNAR()))
 
     def exitAsignacion(self, ctx: AangParser.AsignacionContext):
+        # quad Asignar
         leftOperand = self.PilaO.pop()
-        # if ctx.I_LLAVE() != None:
-        #     operator = "Ver"
-        #     leftOperandd = self.PilaO.top()
-        #     rightOperand = 0
-        #     print(type(leftOperandd[0]))
-        #     if len(self.PilaFunc.items) == 0:
-        #         self.varTable.exist(str(ctx.ID()))
-        #         result = self.varTable.getLSup(str(ctx.ID()))
-        #         self.PilaO.push(
-        #             (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperandd[0]))
-        #     else:
-        #         if self.localVarTable.get_local_variable(str(ctx.ID())):
-        #             self.localVarTable.exist(str(ctx.ID()))
-        #             result = self.localVarTable.getLSup(str(ctx.ID()))
-        #             self.PilaO.push(
-        #                 (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir + leftOperandd[0]))
-        #         else:
-        #             self.varTable.exist(str(ctx.ID()))
-        #             result = self.varTable.getLSup(str(ctx.ID()))
-        #             self.PilaO.push(
-        #                 (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperandd[0]))
-        #     quad = Quadruple(
-        #         operator, leftOperandd[0], rightOperand, result)
-        #     self.FilaQuads.append(quad)
-        #     quad2 = Quadruple(
-        #         operator, leftOperandd[2], rightOperand, result)
-        #     self.FilaQuadsMemoria.append(quad2)
-
         operator = self.PilaOper.pop()
         rightOperand = None
+
         if ctx.I_LLAVE() != None:
-            offset = self.PilaO.pop()
-            # print(offset)
+            # quad de direccion
+            operator2 = '+*'
+            rightOperand2 = self.PilaO.pop()
+            # quad de verificacion
+            operator3 = 'Ver'
+            rightOperand3 = 0
             if len(self.PilaFunc.items) == 0:
                 self.varTable.exist(str(ctx.ID()))
-                result = (str(ctx.ID()), self.varTable.vars[str(
-                    ctx.ID())].dataType, self.varTable.vars[str(
-                        ctx.ID())].memoryDir + offset[0])
+                # quad de verificacion
+                result3 = self.varTable.getLSup(str(ctx.ID()))
+                # quad de direccion
+                leftOperand2 = self.varTable.vars[str(ctx.ID())].memoryDir
+                Type = self.varTable.vars[str(ctx.ID())].dataType
             else:
                 if self.localVarTable.get_local_variable(str(ctx.ID())):
-                    result = (str(ctx.ID()), self.localVarTable.vars[str(
-                        ctx.ID())].dataType, self.localVarTable.vars[str(
-                            ctx.ID())].memoryDir + offset[0])
+                    self.localVarTable.exist(str(ctx.ID()))
+                    # quad de verificacion
+                    result3 = self.localVarTable.getLSup(str(ctx.ID()))
+                    # quad de direccion
+                    leftOperand2 = self.localVarTable.vars[str(
+                        ctx.ID())].memoryDir
+                    Type = self.localVarTable.vars[str(ctx.ID())].dataType
                 else:
                     self.varTable.exist(str(ctx.ID()))
-                    result = (str(ctx.ID()), self.varTable.vars[str(
-                        ctx.ID())].dataType, self.varTable.vars[str(
-                            ctx.ID())].memoryDir + offset[0])
+                    # quad de verificacion
+                    result3 = self.varTable.getLSup(str(ctx.ID()))
+                    # quad de direccion
+                    leftOperand2 = self.varTable.vars[str(ctx.ID())].memoryDir
+                    Type = self.varTable.vars[str(ctx.ID())].dataType
+            # genera variable temporal que contiene la direccion, se la asigna negativo para identificar
+            self.PilaO.push(("-" + self.Avail.newElement(), Type,
+                             self.memoriaTemporal.getEntera() * -1))
+            # quad direccion
+            result2 = self.PilaO.top()
+            # quad ver
+            leftOperand3 = self.PilaO.top()
+            # aprend quads de suma de direcciones
+            quad3 = Quadruple(
+                operator2, leftOperand2, rightOperand2[0], result2[0])
+            self.FilaQuads.append(quad3)
+            quad4 = Quadruple(
+                operator2, leftOperand2, rightOperand2[2], result2[2])
+            self.FilaQuadsMemoria.append(quad4)
+            # quads de verificacion, se usa rightOperand2 porque se necesita el valor dentre de los corchetes
+            quad5 = Quadruple(
+                operator3, rightOperand2[0], rightOperand3, result3)
+            self.FilaQuads.append(quad5)
+            quad6 = Quadruple(
+                operator3, rightOperand2[2], rightOperand3, result3)
+            self.FilaQuadsMemoria.append(quad6)
+
+            result = self.PilaO.pop()
+        # quad Asingar
         else:
             if len(self.PilaFunc.items) == 0:
                 self.varTable.exist(str(ctx.ID()))
@@ -226,6 +236,7 @@ class AangCustomListener(AangListener):
                     result = (str(ctx.ID()), self.varTable.vars[str(
                         ctx.ID())].dataType, self.varTable.vars[str(
                             ctx.ID())].memoryDir)
+        # quad Asignar
         if SemanticCube().cube[result[1], leftOperand[1], operator] == Types().ERROR:
             raise Exception(Types().ERROR)
 
@@ -337,36 +348,56 @@ class AangCustomListener(AangListener):
                     self.PilaO.push(
                         (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir))
         elif ctx.ID() != None and ctx.I_LLAVE() != None:
+            # quad de direccion
+            operator2 = '+*'
+            rightOperand2 = self.PilaO.pop()
+            # quad de verificacion
             operator = "Ver"
-            leftOperand = self.PilaO.pop()
             rightOperand = 0
-            # print(leftOperand)
             if len(self.PilaFunc.items) == 0:
                 self.varTable.exist(str(ctx.ID()))
+                # quad de verificacion
                 result = self.varTable.getLSup(str(ctx.ID()))
-                self.PilaO.push(
-                    (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperand[0]))
+                # quad de direccion
+                leftOperand2 = self.varTable.vars[str(ctx.ID())].memoryDir
+                Type = self.varTable.vars[str(ctx.ID())].dataType
             else:
                 if self.localVarTable.get_local_variable(str(ctx.ID())):
                     self.localVarTable.exist(str(ctx.ID()))
+                    # quad de verificacion
                     result = self.localVarTable.getLSup(str(ctx.ID()))
-                    self.PilaO.push(
-                        (str(ctx.ID()), self.localVarTable.vars[str(ctx.ID())].dataType, self.localVarTable.vars[str(ctx.ID())].memoryDir + leftOperand[0]))
+                    # quad de direccion
+                    leftOperand2 = self.localVarTable.vars[str(
+                        ctx.ID())].memoryDir
+                    Type = self.localVarTable.vars[str(ctx.ID())].dataType
                 else:
                     self.varTable.exist(str(ctx.ID()))
+                    # quad de verificacion
                     result = self.varTable.getLSup(str(ctx.ID()))
-                    self.PilaO.push(
-                        (str(ctx.ID()), self.varTable.vars[str(ctx.ID())].dataType, self.varTable.vars[str(ctx.ID())].memoryDir + leftOperand[0]))
+                    # quad de direccion
+                    leftOperand2 = self.varTable.vars[str(ctx.ID())].memoryDir
+                    Type = self.varTable.vars[str(ctx.ID())].dataType
+            # genera variable temporal que contiene la direccion, se la asigna negativo para identificar
+            self.PilaO.push(("-" + self.Avail.newElement(), Type,
+                             self.memoriaTemporal.getEntera() * -1))
+            # quad direccion
+            result2 = self.PilaO.top()
+            # quad ver
+            leftOperand = self.PilaO.top()
+            # aprend quads de suma de direcciones, , se usa rightOperand2 porque se necesita el valor dentre de los corchetes
+            quad3 = Quadruple(
+                operator2, leftOperand2, rightOperand2[0], result2[0])
+            self.FilaQuads.append(quad3)
+            quad4 = Quadruple(
+                operator2, leftOperand2, rightOperand2[2], result2[2])
+            self.FilaQuadsMemoria.append(quad4)
+            # quads de verificacion
             quad = Quadruple(
-                operator, leftOperand[0], rightOperand, result)
+                operator, rightOperand2[0], rightOperand, result)
             self.FilaQuads.append(quad)
             quad2 = Quadruple(
-                operator, leftOperand[2], rightOperand, result)
+                operator, rightOperand2[2], rightOperand, result)
             self.FilaQuadsMemoria.append(quad2)
-        #    print(quad)
-        #    print(quad2)
-        # for index, quad in enumerate(self.FilaQuads, 1):
-        #    print(index, quad)
         if ctx.I_LLAVE() != None:
             self.PilaOper.pop()
 
@@ -470,8 +501,6 @@ class AangCustomListener(AangListener):
                         self.varTable.getLSup(self.PilaArr.top()) - 1
             else:
                 # El limite superior es igual al tamaño del arreglo menos 1
-                self.localVarTable.setLSup(
-                    str(ctx.ID()), self.PilaO.pop()[0])
                 self.localVarTable.setLSup(
                     self.PilaArr.top(), self.PilaO.pop()[0])
                 if self.PilaTipos.top() == 'int':

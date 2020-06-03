@@ -1,0 +1,31 @@
+programa findArray;
+int i, A[5], num, cnt, pos;
+
+int empezar {
+    num = 39;
+    pos = 0;
+    i=0;
+    cnt = 0;
+
+    A[0] = 12; 
+    A[1] = 0;
+    A[2] = 39;
+    A[3] = 50;
+    A[4] = 1;
+
+    while (i<5) {
+        if(A[i]==num)
+        {
+            cnt=1;
+            pos=i+1;
+        }
+        i = i+1;
+    }
+    if(cnt==0) {
+        print(False);
+    }
+    else {
+        print(pos - 1);
+    }
+}
+fin

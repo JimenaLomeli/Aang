@@ -235,6 +235,13 @@ def main(argv):
                 functionResult)[getStartingPoint(functionResult)]
             mandarDespertar()
 
+        elif FilaQuadsMemoria[i].operator == '+*':
+            left = FilaQuadsMemoria[i].leftOp
+            right = FilaQuadsMemoria[i].rightOp
+            res = FilaQuadsMemoria[i].result * - 1
+            getMemorySection(res)[getStartingPoint(res)] = int(left +
+                                                               getMemorySection(right)[getStartingPoint(right)])
+
         elif FilaQuadsMemoria[i].operator == 'Ver':
             left = FilaQuadsMemoria[i].leftOp
             right = FilaQuadsMemoria[i].rightOp
@@ -306,6 +313,9 @@ def getMemoryType(direccion):
 
 
 def getMemorySection(direccion):
+    if direccion < 0:
+        direccion = direccion * -1
+        direccion = getMemorySection(direccion)[getStartingPoint(direccion)]
     return Memoria[getMemoryScope(direccion)][getMemoryType(direccion)]
 
 
@@ -329,6 +339,9 @@ def getLocalMemory(direccion):
 
 
 def getStartingPoint(direccion):
+    if direccion < 0:
+        direccion = direccion * -1
+        direccion = getMemorySection(direccion)[getStartingPoint(direccion)]
     if direccion >= 1000 and direccion <= 1999:
         return direccion - 1000
     elif direccion >= 2000 and direccion <= 2999:
