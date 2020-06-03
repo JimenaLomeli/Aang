@@ -1,12 +1,13 @@
 programa ejemplo;
 int a;
 
-
 int empezar {
 	a = 0;
 	while(a < 5){
-        if (a <  2){
+        if (a <  10 && a > 0){
 		    print(a);
+        } else {
+            print('c');
         }
 		a = a + 1;
 	}

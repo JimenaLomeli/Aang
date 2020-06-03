@@ -1,4 +1,10 @@
 from django import forms
 
+
 class codigo(forms.Form):
-    codigoText = forms.CharField(widget=forms.Textarea)
+    code = open('input.txt', 'r')
+    content = code.read()
+    code.close()
+
+    codigoText = forms.CharField(widget=forms.Textarea, initial=content)
+    codigoText.widget.attrs.update(initial="sadas")

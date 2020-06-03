@@ -66,3 +66,6 @@ class MatrizColores:
                 if len(self.Matriz[x][y]) > 0:
                     self.context["color" + str(j)] = self.Matriz[x][y][0]
                 j = j + 1
+
+    def Color(self, color):
+        self.color = color

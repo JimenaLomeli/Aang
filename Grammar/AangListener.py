@@ -179,6 +179,15 @@ class AangListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by AangParser#color.
+    def enterColor(self, ctx:AangParser.ColorContext):
+        pass
+
+    # Exit a parse tree produced by AangParser#color.
+    def exitColor(self, ctx:AangParser.ColorContext):
+        pass
+
+
     # Enter a parse tree produced by AangParser#fun_regresar.
     def enterFun_regresar(self, ctx:AangParser.Fun_regresarContext):
         pass

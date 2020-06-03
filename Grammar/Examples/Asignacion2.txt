@@ -1,0 +1,17 @@
+programa ejemplo;
+int a, d, e;
+bool b;
+char c;
+
+int empezar {
+	a = 10;
+    d = 20;
+    e = 30;
+    b = False;
+    c = 'k';
+    ## resultado debe ser 60
+	print(a + d + e);
+    print(b);
+    print(c);
+}
+fin

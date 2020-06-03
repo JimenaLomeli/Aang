@@ -1,22 +1,14 @@
 programa ejemplo;
-int a, c, b,f, i, j ,k;
-char toph;
-void uno(int a, int b){
-	a = a + b;
-}
-
-char Zuko (int a, int b, int c){
-	int d,e;
-	char monterrey;
-	a = 1;
-	#a = c + f / e;
-	return monterrey;
-}
+int a;
 
 
 int empezar {
-	#b = c + a;
-	a = 1320253651;
-	toph = Zuko(1, 2, 34);
+	a = 0;
+
+	while(a < 5){
+		print(a);
+		a = a + 1;
+	}
+
 }
 fin

@@ -267,10 +267,14 @@ def main(argv):
             MatColor.Cambiar(left)
             pass
 
+        elif FilaQuadsMemoria[i].operator == 'color':
+            left = FilaQuadsMemoria[i].leftOp
+            MatColor.Color('#' + left)
+
         elif FilaQuadsMemoria[i].operator == 'Exit':
-            MatColor.printMat()
+            # MatColor.printMat()
             MatColor.translate()
-            print(MatColor.context)
+            # print(MatColor.context)
             with open("MatColors.pickle", "wb") as f:
                 pickle.dump(MatColor.context, f)
 

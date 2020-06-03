@@ -1,0 +1,22 @@
+programa factNR;
+int n, fact, i;
+
+int empezar {
+    n=6;
+    i=1;
+    fact=1;
+    
+    if (n<0) {
+        print('W');
+    }
+    else {
+        while(i < (n+1)) {
+            fact=fact*i;
+            i = i+1;
+        }  
+    }
+
+    print(fact);          
+}
+
+fin

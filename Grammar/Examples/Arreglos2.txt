@@ -1,0 +1,24 @@
+programa HelloWorld;
+int i;
+char Hello[10];
+
+int empezar { 
+    Hello[0] = 'H';
+    Hello[1] = 'E';
+    Hello[2] = 'L';
+    Hello[3] = 'L';
+    Hello[4] = 'O';
+    Hello[5] = 'W';
+    Hello[6] = 'O';
+    Hello[7] = 'R';
+    Hello[8] = 'L';
+    Hello[9] = 'D';
+
+    i = 0;
+
+    while(i < 10){
+        print(Hello[i]);
+        i = i + 1;
+    }
+}
+fin

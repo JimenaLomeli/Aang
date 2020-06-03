@@ -1,0 +1,17 @@
+programa ejemplo;
+int a, d, e;
+bool b;
+char c;
+
+int empezar {
+	a = 10;
+    d = 30;
+    e = 30;
+    b = False;
+    c = 'k';
+    ## resultado debe ser 90
+	print((e * d) / a);
+    print(b);
+    print(c);
+}
+fin

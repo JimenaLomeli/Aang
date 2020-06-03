@@ -35,6 +35,7 @@ EMPEZAR: 'empezar';
 PINTAR: 'pintar';
 MOVER: 'mover';
 CAMBIAR_DIRECCION: 'cambiarDireccion';
+CAMBIAR_COLOR: 'cambiarColor';
 ARRIBA: 'arriba';
 ABAJO: 'abajo';
 DERECHA: 'derecha';
@@ -55,6 +56,7 @@ COMA: ',';
 //Data Types
 VOID: 'void';
 CTE_BOOL: 'True' | 'False';
+HEXADECIMAL: [A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9][A-Fa-f0-9];
 ID: [a-zA-Z]+;
 CTE_INT: [0-9][0-9]*;
 CTE_CHAR: '\'' [A-Za-z] '\'';
@@ -96,6 +98,7 @@ acciones:
 	| pintar acciones
 	| mover acciones
 	| cambiar acciones
+	| color acciones
 	| /* epsilon */;
 
 pintar: PINTAR I_PARENTESIS D_PARENTESIS PYCOMA;
@@ -107,6 +110,8 @@ cambiar:
 	| CAMBIAR_DIRECCION I_PARENTESIS ABAJO D_PARENTESIS PYCOMA
 	| CAMBIAR_DIRECCION I_PARENTESIS DERECHA D_PARENTESIS PYCOMA
 	| CAMBIAR_DIRECCION I_PARENTESIS IZQUIERDA D_PARENTESIS PYCOMA;
+
+color: CAMBIAR_COLOR I_PARENTESIS HEXADECIMAL D_PARENTESIS PYCOMA;
 
 fun_regresar: RETURN exp PYCOMA | RETURN llamar_fun;
 

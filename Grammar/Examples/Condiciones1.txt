@@ -1,0 +1,12 @@
+programa ejemplo;
+int a,b,c,d;
+
+int empezar {
+	a = 5;
+	if(1 < 2) {
+		a = a + 5;
+	} 
+	print(a);
+
+}
+fin

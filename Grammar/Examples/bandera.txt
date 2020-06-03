@@ -1,0 +1,41 @@
+programa bandera;
+int a,b;
+void moverEsquina(){
+      cambiarDireccion(arriba);
+      mover(5);
+      cambiarDireccion(izquierda);
+      mover(5);
+}
+void pintarLinea() {
+     int a;
+     a = 0;
+     while(a < 10){
+          pintar();
+          mover(1);
+          a = a + 1;
+    }
+}
+
+int empezar {
+    pintar();
+    a = 0;
+    b = 0;
+    moverEsquina();
+    cambiarColor(489c2d);
+    while ( b < 9) {
+       if (b == 3){
+             cambiarColor(ffffff);
+       }
+       if (b == 6){
+             cambiarColor(f33535);
+       }
+           cambiarDireccion(abajo);
+           pintarLinea();
+           cambiarDireccion(arriba);
+           mover(9);
+           cambiarDireccion(derecha);
+           mover(1);
+       b = b + 1;
+    }
+}
+fin

@@ -5,10 +5,10 @@ from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
-from .forms import codigo
+# from .forms import codigo
 import subprocess
 from subprocess import call
-
+from django import forms
 import pickle as pickle
 
 
@@ -21,11 +21,19 @@ def index(request):
     except:
         print("No funciono pickle")
 
+    class codigos(forms.Form):
+        code = open('input.txt', 'r')
+        content = code.read()
+        code.close()
+
+        codigoText = forms.CharField(
+            widget=forms.Textarea, initial=str(content))
+    form = codigos()
     if request.method == 'POST':
-        form = codigo(request.POST)
+        form = codigos(request.POST)
         if form.is_valid():
             code = form.cleaned_data['codigoText']
-            print(code)
+            code = code.replace('\r', '')
             f = open('input.txt', 'w')
             f.write(code)
             f.close()
@@ -46,6 +54,5 @@ def index(request):
             #     'color41': 'black'
             # }
 
-    form = codigo()
     context['codigo'] = form
     return render(request, 'index.html', context=context)

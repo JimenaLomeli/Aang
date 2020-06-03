@@ -1,0 +1,20 @@
+programa ejemplo;
+int n;
+
+int recurSum(int n) 
+{ 
+    int b;
+    if (n < 1 || n == 1){
+        return n;
+    }  
+    b = recurSum(n - 1);
+    return n + b; 
+} 
+
+int empezar { 	
+	n = 5;
+    print(recurSum(n));
+}
+fin
+
+  

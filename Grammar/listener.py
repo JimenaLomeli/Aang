@@ -249,7 +249,6 @@ class AangCustomListener(AangListener):
 
 # ========================== ESCRIBIR ==========================
 
-
     def enterEscribir(self, ctx: AangParser.EscribirContext):
         self.PilaOper.push(str(ctx.PRINT()))
         pass
@@ -307,7 +306,6 @@ class AangCustomListener(AangListener):
 
 
 # ========================== CONSTANTES ==========================
-
 
     def enterCte_var(self, ctx):
         if ctx.I_LLAVE() != None:
@@ -441,7 +439,6 @@ class AangCustomListener(AangListener):
 
 # ========================== VARIABLES ==========================
 
-
     def exitVariable(self, ctx: AangParser.VariableContext):
         self.PilaTipos.pop()
         pass
@@ -552,7 +549,6 @@ class AangCustomListener(AangListener):
 
 # ========================== CONDICION ==========================
 
-
     def enterC1(self, ctx: AangParser.C1Context):
         if(self.PilaO.top()[1] != 'bool'):
             raise Exception(
@@ -604,7 +600,6 @@ class AangCustomListener(AangListener):
 
 
 # ========================== CICLO ==========================
-
 
     def enterCiclo1(self, ctx: AangParser.Ciclo1Context):
         self.PSaltos.push(len(self.FilaQuads) + 1)
@@ -732,7 +727,6 @@ class AangCustomListener(AangListener):
 
 # ========================== PROGRAMA MAIN ==========================
 
-
     def enterPrincipal(self, ctx: AangParser.PrincipalContext):
         self.FilaQuads[0].result = len(self.FilaQuads) + 1
         self.FilaQuadsMemoria[0].result = len(
@@ -770,7 +764,6 @@ class AangCustomListener(AangListener):
 
 
 # ========================== ARGUMENTOS ==========================
-
 
     def exitArgumentos(self, ctx: AangParser.ArgumentosContext):
         if ctx.exp() != None:
@@ -853,6 +846,7 @@ class AangCustomListener(AangListener):
 
 # ========================== FUNCIONES ESPECIALES ==========================
 
+
     def enterPintar(self, ctx: AangParser.PintarContext):
         operator = "pintar"
         rightOperand = None
@@ -909,4 +903,20 @@ class AangCustomListener(AangListener):
         pass
 
     def exitCambiar(self, ctx: AangParser.CambiarContext):
+        pass
+
+    def enterColor(self, ctx: AangParser.ColorContext):
+        operator = "color"
+        rightOperand = str(ctx.HEXADECIMAL())
+        leftOperand = None
+        result = None
+        quad = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        quad2 = Quadruple(
+            operator, rightOperand, leftOperand, result)
+        self.FilaQuads.append(quad)
+        self.FilaQuadsMemoria.append(quad2)
+        pass
+
+    def exitColor(self, ctx: AangParser.ColorContext):
         pass

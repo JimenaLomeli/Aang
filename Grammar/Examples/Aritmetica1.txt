@@ -1,25 +1,7 @@
 programa ejemplo;
-int a, b;
-char d;
-bool e, r;
-
-int toph (int a, int b) {
-	print(a);
-	if (a < 30){
-		return toph(a + 10, b);
-	} else {
-		return a;
-	}
-}
 
 int empezar { 	
-	a = 2;
-	b = 3;
-	d = 'C';
-	#e = False;
-	#r = False;
-	#print(b);
-	print(toph(10, b));
-	#print(b);
+	## resultado debe ser 7
+	print(1 + 2 * 3);
 }
 fin

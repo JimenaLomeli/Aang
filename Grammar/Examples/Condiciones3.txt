@@ -1,0 +1,13 @@
+programa ejemplo;
+int a,b,c,d;
+
+int empezar {
+	a = 5;
+	if(True) {
+		a = a + 40;
+	} else {
+        a = a * 5;
+    }
+	print(a);
+}
+fin

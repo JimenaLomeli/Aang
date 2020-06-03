@@ -1,0 +1,14 @@
+programa ejemplo;
+int a;
+bool b;
+char c;
+
+int empezar {
+	a = 10;
+    b = True;
+    c = 'C';
+	print(a);
+    print(b);
+    print(c);
+}
+fin

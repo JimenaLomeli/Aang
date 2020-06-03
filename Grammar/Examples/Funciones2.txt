@@ -1,0 +1,27 @@
+programa ejemplo;
+int a, c, b;
+
+
+void uno(){
+	a = a + b;
+}
+
+int Zuko (bool a, int b, int c){
+	int d;
+    d = 0;
+    if (a){
+        d = b + c;
+    } else {
+        uno();
+    }
+	return d;
+}
+
+
+int empezar {
+	b = 5;
+	a = 0;
+	print(Zuko(False, 2, 34));
+    print(a);
+}
+fin
